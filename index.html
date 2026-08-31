@@ -1,0 +1,1523 @@
+<!DOCTYPE html>
+<html lang="th" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Competency 2026 Interactive Learning & Exam Simulator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              800: '#3730a3',
+              900: '#312e81',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Prompt', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    pre, code, textarea.code-font {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(156, 163, 175, 0.4);
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="h-full bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 antialiased flex flex-col transition-colors duration-200">
+
+  <!-- Top App Navigation -->
+  <header class="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur border-b border-slate-200 dark:border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <!-- Logo & Title -->
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-brand-500/30">
+            C26
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h1 class="font-bold text-base sm:text-lg leading-tight tracking-tight text-slate-900 dark:text-white">Competency 2026</h1>
+              <span class="text-[10px] px-2 py-0.5 font-medium rounded-full bg-brand-100 dark:bg-brand-900/50 text-brand-700 dark:text-brand-300">CoE Exam Simulator</span>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Interactive Learning & Practical Problem Solving</p>
+          </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="hidden md:flex items-center gap-1 bg-slate-100 dark:bg-slate-800/60 p-1 rounded-xl border border-slate-200 dark:border-slate-700/50 text-sm font-medium">
+          <button onclick="switchTab('notes')" id="nav-notes" class="nav-tab px-3.5 py-1.5 rounded-lg transition-all text-brand-600 dark:text-brand-400 bg-white dark:bg-slate-700 shadow-sm font-semibold">
+            📚 Study Notes
+          </button>
+          <button onclick="switchTab('mcq')" id="nav-mcq" class="nav-tab px-3.5 py-1.5 rounded-lg transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+            📝 Multiple Choice (20)
+          </button>
+          <button onclick="switchTab('coding')" id="nav-coding" class="nav-tab px-3.5 py-1.5 rounded-lg transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+            💻 Coding Lab (4)
+          </button>
+          <button onclick="switchTab('prompt')" id="nav-prompt" class="nav-tab px-3.5 py-1.5 rounded-lg transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+            🤖 AI Context Sim (4)
+          </button>
+          <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-tab px-3.5 py-1.5 rounded-lg transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+            📊 Dashboard
+          </button>
+        </nav>
+
+        <!-- Right Utilities -->
+        <div class="flex items-center gap-2">
+          <!-- Theme Toggle -->
+          <button onclick="toggleDarkMode()" class="p-2 rounded-xl text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="Toggle Theme">
+            <svg id="theme-icon-dark" class="w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+            <svg id="theme-icon-light" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Navigation Bar -->
+      <div class="flex md:hidden overflow-x-auto py-2 border-t border-slate-200 dark:border-slate-800 gap-2 text-xs font-medium custom-scrollbar">
+        <button onclick="switchTab('notes')" id="m-nav-notes" class="px-3 py-1.5 rounded-lg whitespace-nowrap bg-brand-500 text-white">Study Notes</button>
+        <button onclick="switchTab('mcq')" id="m-nav-mcq" class="px-3 py-1.5 rounded-lg whitespace-nowrap bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">MCQ Exam</button>
+        <button onclick="switchTab('coding')" id="m-nav-coding" class="px-3 py-1.5 rounded-lg whitespace-nowrap bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Coding Lab</button>
+        <button onclick="switchTab('prompt')" id="m-nav-prompt" class="px-3 py-1.5 rounded-lg whitespace-nowrap bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">AI Prompt Sim</button>
+        <button onclick="switchTab('dashboard')" id="m-nav-dashboard" class="px-3 py-1.5 rounded-lg whitespace-nowrap bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Dashboard</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Body -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+
+    <!-- ========================================================================= -->
+    <!-- TAB 1: STUDY NOTES (15 SKILLS) -->
+    <!-- ========================================================================= -->
+    <section id="tab-notes" class="tab-pane space-y-6">
+      <div class="bg-gradient-to-r from-brand-600 to-indigo-600 rounded-2xl p-6 sm:p-8 text-white shadow-xl">
+        <div class="max-w-3xl">
+          <span class="inline-block px-2.5 py-1 rounded-full bg-white/20 text-xs font-medium backdrop-blur mb-3">Complete Syllabus & Guide</span>
+          <h2 class="text-2xl sm:text-3xl font-bold tracking-tight mb-2">สรุปเนื้อหาสำคัญ 15 ทักษะ Competency 2026</h2>
+          <p class="text-brand-100 text-sm sm:text-base leading-relaxed">
+            ถอดรหัสจากเกณฑ์ของ CoE เน้นสิ่งที่ออกสอบจริงในกระบวนการทำงาน พร้อม Tips & Tricks และหัวข้อ AI ที่เพิ่มเข้ามาใหม่เป็นครั้งแรก
+          </p>
+        </div>
+      </div>
+
+      <!-- Filters & Search -->
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div class="flex flex-wrap items-center gap-1.5 w-full sm:w-auto">
+          <button onclick="filterNotes('all')" class="note-filter-btn px-3 py-1 text-xs font-medium rounded-lg bg-brand-500 text-white" data-cat="all">ทั้งหมด (15)</button>
+          <button onclick="filterNotes('Software Design and Architecture')" class="note-filter-btn px-3 py-1 text-xs font-medium rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200" data-cat="Software Design and Architecture">Architecture</button>
+          <button onclick="filterNotes('Software Engineering & Development')" class="note-filter-btn px-3 py-1 text-xs font-medium rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200" data-cat="Software Engineering & Development">Engineering</button>
+          <button onclick="filterNotes('Infrastructure & DevOps')" class="note-filter-btn px-3 py-1 text-xs font-medium rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200" data-cat="Infrastructure & DevOps">DevOps/Cloud</button>
+          <button onclick="filterNotes('Security')" class="note-filter-btn px-3 py-1 text-xs font-medium rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200" data-cat="Security">Security</button>
+          <button onclick="filterNotes('ProblemSolving')" class="note-filter-btn px-3 py-1 text-xs font-medium rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200" data-cat="ProblemSolving">Coding</button>
+          <button onclick="filterNotes('future skill')" class="note-filter-btn px-3 py-1 text-xs font-medium rounded-lg bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-200" data-cat="future skill">⭐️ AI Prompt</button>
+        </div>
+        <div class="relative w-full sm:w-64">
+          <input type="text" id="note-search" oninput="searchNotes()" placeholder="ค้นหาทักษะ, คีย์เวิร์ด..." class="w-full pl-9 pr-3 py-1.5 text-xs rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500">
+          <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- Skills Cards Grid -->
+      <div id="skills-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- Injected via JavaScript -->
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 2: MULTIPLE CHOICE EXAM (SINGLE & MULTI SELECT) -->
+    <!-- ========================================================================= -->
+    <section id="tab-mcq" class="tab-pane hidden space-y-6">
+      <!-- Exam Control Bar -->
+      <div class="bg-white dark:bg-slate-900 p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold">
+            ⏱️
+          </div>
+          <div>
+            <div class="text-xs text-slate-500">เวลาที่เหลือ (Exam Timer)</div>
+            <div id="exam-timer" class="font-mono text-xl font-bold text-slate-800 dark:text-slate-100">45:00</div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button onclick="toggleExamMode()" id="btn-mode-toggle" class="text-xs font-medium px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
+            โหมด: <span id="current-exam-mode-text" class="text-brand-600 font-semibold">ซ้อมทำทีละข้อ (พร้อมเฉลย)</span>
+          </button>
+          <button onclick="resetMcqExam()" class="text-xs font-medium px-3 py-1.5 rounded-lg text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition">
+            รีเซ็ตข้อสอบ
+          </button>
+        </div>
+      </div>
+
+      <!-- Questions & Navigation Layout -->
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <!-- Question Content (3 Cols) -->
+        <div class="lg:col-span-3 space-y-4">
+          <div id="mcq-question-card" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm min-h-[420px] flex flex-col justify-between">
+            <!-- Injected via JavaScript -->
+          </div>
+
+          <!-- Bottom Navigation Buttons -->
+          <div class="flex items-center justify-between pt-2">
+            <button onclick="navigateQuestion(-1)" id="btn-prev-q" class="px-4 py-2 text-sm font-medium rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-1.5">
+              ← ข้อก่อนหน้า
+            </button>
+            <div class="text-xs text-slate-500">
+              ข้อ <span id="current-q-num">1</span> จาก 20
+            </div>
+            <button onclick="navigateQuestion(1)" id="btn-next-q" class="px-4 py-2 text-sm font-medium rounded-xl bg-brand-600 text-white hover:bg-brand-700 transition flex items-center gap-1.5 shadow-sm">
+              ข้อถัดไป →
+            </button>
+          </div>
+        </div>
+
+        <!-- Question Grid Sidebar (1 Col) -->
+        <div class="space-y-4">
+          <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm">
+            <h3 class="font-semibold text-sm mb-3 flex items-center justify-between">
+              <span>แผนผังข้อสอบ</span>
+              <span class="text-xs font-normal text-slate-500" id="answered-count-badge">ตอบแล้ว 0/20</span>
+            </h3>
+            <div class="grid grid-cols-5 gap-2" id="q-nav-grid">
+              <!-- Injected via JS -->
+            </div>
+
+            <div class="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 space-y-2 text-xs text-slate-500">
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded bg-emerald-500 inline-block"></span> ตอบแล้ว
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded bg-slate-200 dark:bg-slate-700 inline-block"></span> ยังไม่ได้ตอบ
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded ring-2 ring-brand-500 bg-brand-50 dark:bg-brand-950 inline-block"></span> ข้อปัจจุบัน
+              </div>
+            </div>
+
+            <button onclick="submitExam()" id="btn-submit-exam" class="w-full mt-5 py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm transition shadow-sm">
+              ส่งข้อสอบและตรวจคะแนน
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 3: CODING LAB (IN-BROWSER JAVASCRIPT TEST RUNNER) -->
+    <!-- ========================================================================= -->
+    <section id="tab-coding" class="tab-pane hidden space-y-6">
+      <div class="flex flex-col lg:flex-row items-stretch gap-6">
+        <!-- Problem List Sidebar -->
+        <div class="w-full lg:w-80 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-2 shrink-0">
+          <h3 class="font-bold text-sm text-slate-900 dark:text-white px-2 mb-2 flex items-center justify-between">
+            <span>โจทย์ข้อสอบ Coding</span>
+            <span class="text-[11px] font-normal px-2 py-0.5 rounded bg-brand-100 dark:bg-brand-950 text-brand-700 dark:text-brand-300">Live Sandbox</span>
+          </h3>
+          <div id="coding-problem-list" class="space-y-1.5">
+            <!-- Injected via JS -->
+          </div>
+        </div>
+
+        <!-- Problem Editor & Output (Flex-1) -->
+        <div class="flex-1 space-y-4">
+          <!-- Problem Description Box -->
+          <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+            <div class="flex items-center justify-between mb-2">
+              <h2 id="coding-title" class="font-bold text-lg text-slate-900 dark:text-white"></h2>
+              <span id="coding-difficulty" class="text-xs px-2.5 py-0.5 rounded-full font-medium"></span>
+            </div>
+            <div id="coding-desc" class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line mb-3"></div>
+          </div>
+
+          <!-- Code Editor Container -->
+          <div class="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden shadow-md">
+            <div class="bg-slate-800/80 px-4 py-2.5 flex items-center justify-between border-b border-slate-700/60">
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-rose-500 inline-block"></span>
+                <span class="w-3 h-3 rounded-full bg-amber-500 inline-block"></span>
+                <span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span>
+                <span class="text-xs text-slate-400 font-mono ml-2">solution.js</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <button onclick="toggleCodingSolution()" id="btn-toggle-solution" class="text-xs px-2.5 py-1 rounded bg-slate-700 hover:bg-slate-600 text-amber-300 transition flex items-center gap-1">
+                  💡 ดูเฉลย (Solution)
+                </button>
+                <button onclick="resetCurrentCode()" class="text-xs px-2.5 py-1 rounded bg-slate-700 hover:bg-slate-600 text-slate-300 transition">
+                  รีเซ็ตโค้ด
+                </button>
+                <button onclick="runCodingTests()" class="text-xs font-semibold px-4 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white transition flex items-center gap-1.5 shadow-sm">
+                  ▶ รัน Unit Tests
+                </button>
+              </div>
+            </div>
+            <textarea id="coding-editor" class="w-full h-72 p-4 bg-slate-950 text-slate-100 code-font text-xs sm:text-sm resize-y focus:outline-none custom-scrollbar" spellcheck="false"></textarea>
+          </div>
+
+          <!-- Solution Container (Hidden by default) -->
+          <div id="coding-solution-box" class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-amber-200 dark:border-amber-900/60 shadow-sm hidden space-y-3">
+            <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+              <div class="flex items-center gap-2">
+                <span class="text-base">💡</span>
+                <h4 class="font-bold text-sm text-slate-900 dark:text-white">เฉลยและแนวคิดระดับ Clean Code (Model Solution)</h4>
+              </div>
+              <button onclick="loadSolutionToEditor()" class="text-xs font-medium px-3 py-1 rounded-lg bg-brand-50 hover:bg-brand-100 dark:bg-brand-950 dark:hover:bg-brand-900 text-brand-700 dark:text-brand-300 transition flex items-center gap-1">
+                📋 คัดลอกเฉลยลง Editor
+              </button>
+            </div>
+            <pre id="coding-solution-code" class="p-4 rounded-xl bg-slate-950 text-emerald-400 code-font text-xs sm:text-sm custom-scrollbar overflow-x-auto border border-slate-800"></pre>
+            <div id="coding-solution-explanation" class="p-3.5 rounded-xl bg-amber-50/60 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-900/40 text-xs text-amber-900 dark:text-amber-200 leading-relaxed whitespace-pre-line"></div>
+          </div>
+
+          <!-- Test Results Box -->
+          <div id="coding-results-box" class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hidden">
+            <div class="flex items-center justify-between mb-4">
+              <h4 class="font-bold text-sm flex items-center gap-2">
+                <span>ผลการรัน Test Cases</span>
+                <span id="tests-summary-badge" class="text-xs px-2.5 py-0.5 rounded-full font-medium"></span>
+              </h4>
+              <span id="tests-exec-time" class="text-xs font-mono text-slate-400"></span>
+            </div>
+            <div id="test-cases-table" class="space-y-2"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 4: AI & PROMPT OPTIMIZATION SIMULATOR -->
+    <!-- ========================================================================= -->
+    <section id="tab-prompt" class="tab-pane hidden space-y-6">
+      <div class="bg-gradient-to-r from-indigo-900 via-brand-900 to-slate-900 rounded-2xl p-6 text-white border border-indigo-700/40 shadow-xl">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-xs px-2.5 py-0.5 rounded-full bg-indigo-500/30 text-indigo-300 font-semibold border border-indigo-400/30">CoE Exam Highlight</span>
+              <span class="text-xs text-slate-300 font-mono">Future Skill: AI & Prompt Engineer</span>
+            </div>
+            <h2 class="text-2xl font-bold tracking-tight">สนามสอบจำลอง: Context Optimization</h2>
+            <p class="text-xs sm:text-sm text-slate-300 mt-1">
+              ฝึกเขียน Prompt อิงโจทย์งานจริง (Production Incident) โดยระบบจะวิเคราะห์ความสมบูรณ์ 4 ด้าน (Context, SNR, Guardrails, Output)
+            </p>
+          </div>
+          <div class="flex items-center gap-1.5 bg-slate-800/80 p-1.5 rounded-xl border border-slate-700">
+            <button onclick="selectPromptScenario(0)" id="btn-sc-0" class="px-3 py-1 text-xs rounded-lg font-medium transition bg-brand-600 text-white">1. SQL Tuning</button>
+            <button onclick="selectPromptScenario(1)" id="btn-sc-1" class="px-3 py-1 text-xs rounded-lg font-medium transition text-slate-400 hover:text-white">2. Unit Test</button>
+            <button onclick="selectPromptScenario(2)" id="btn-sc-2" class="px-3 py-1 text-xs rounded-lg font-medium transition text-slate-400 hover:text-white">3. Security</button>
+            <button onclick="selectPromptScenario(3)" id="btn-sc-3" class="px-3 py-1 text-xs rounded-lg font-medium transition text-slate-400 hover:text-white">4. Microservices</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Left: Ticket & Context Data (5 Cols) -->
+        <div class="lg:col-span-5 space-y-4">
+          <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm space-y-4">
+            <div>
+              <span id="prompt-sc-ticket" class="text-xs font-mono px-2 py-0.5 rounded bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 font-semibold"></span>
+              <h3 id="prompt-sc-title" class="font-bold text-base text-slate-900 dark:text-white mt-1.5"></h3>
+              <p id="prompt-sc-problem" class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-2 leading-relaxed"></p>
+            </div>
+
+            <div>
+              <h4 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Context & Code Snippet:</h4>
+              <pre id="prompt-sc-context" class="p-3 rounded-xl bg-slate-950 text-slate-200 text-xs custom-scrollbar overflow-x-auto border border-slate-800 max-h-56"></pre>
+            </div>
+
+            <div class="p-3 rounded-xl bg-brand-50/60 dark:bg-brand-950/30 border border-brand-100 dark:border-brand-900/50">
+              <h4 class="text-xs font-semibold text-brand-800 dark:text-brand-300 mb-1">📋 เป้าหมายของข้อสอบ:</h4>
+              <p id="prompt-sc-requirements" class="text-xs text-brand-900 dark:text-brand-200 whitespace-pre-line leading-relaxed"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Candidate Prompt & Evaluator (7 Cols) -->
+        <div class="lg:col-span-7 space-y-4">
+          <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <h3 class="font-bold text-sm text-slate-900 dark:text-white">พื้นที่เขียน Prompt ของคุณ</h3>
+              <!-- Quick Insert Tags -->
+              <div class="flex items-center gap-1 text-[11px]">
+                <span class="text-slate-400 mr-1">แทรกเร็ว:</span>
+                <button onclick="insertTag('<role>', '</role>')" class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 hover:bg-brand-100 dark:hover:bg-brand-900 text-slate-700 dark:text-slate-300 transition">&lt;role&gt;</button>
+                <button onclick="insertTag('<context>', '</context>')" class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 hover:bg-brand-100 dark:hover:bg-brand-900 text-slate-700 dark:text-slate-300 transition">&lt;context&gt;</button>
+                <button onclick="insertTag('<constraints>', '</constraints>')" class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 hover:bg-brand-100 dark:hover:bg-brand-900 text-slate-700 dark:text-slate-300 transition">&lt;constraints&gt;</button>
+                <button onclick="insertTag('<output_format>', '</output_format>')" class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 hover:bg-brand-100 dark:hover:bg-brand-900 text-slate-700 dark:text-slate-300 transition">&lt;output&gt;</button>
+              </div>
+            </div>
+
+            <textarea id="prompt-input" rows="10" placeholder="พิมพ์ Prompt ที่นี่ โดยใช้หลักการ Context Optimization (ตัด Noise, วางโครงสร้างด้วย Tags, ใส่ Constraints และระบุ Output Format)..." class="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 text-xs sm:text-sm font-mono focus:outline-none focus:ring-2 focus:ring-brand-500 custom-scrollbar leading-relaxed"></textarea>
+
+            <div class="flex items-center justify-between pt-1">
+              <div class="text-xs text-slate-400 font-mono">
+                <span id="prompt-word-count">0</span> คำ | <span id="prompt-char-count">0</span> ตัวอักษร
+              </div>
+              <div class="flex items-center gap-2">
+                <button onclick="evaluateCandidatePrompt()" class="px-5 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-xs sm:text-sm transition shadow-sm flex items-center gap-1.5">
+                  🔍 ตรวจสอบคะแนน Rubric (100 คะแนน)
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Evaluation Scorecard Results (Hidden until evaluated) -->
+          <div id="rubric-result-box" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm space-y-4 hidden">
+            <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+              <div>
+                <h4 class="font-bold text-sm text-slate-900 dark:text-white">ผลการประเมิน Prompt (CoE Scoring Rubric)</h4>
+                <p class="text-xs text-slate-500" id="rubric-status-text"></p>
+              </div>
+              <div class="text-right">
+                <div class="text-2xl font-bold font-mono text-brand-600 dark:text-brand-400" id="rubric-total-score">0/100</div>
+              </div>
+            </div>
+
+            <!-- 4 Dimensions breakdown -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="rubric-dimensions-container">
+              <!-- Injected via JS -->
+            </div>
+
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-xs space-y-1.5" id="rubric-feedback-list">
+              <!-- Feedback list -->
+            </div>
+
+            <!-- Toggle Gold Standard Prompt -->
+            <div class="pt-2">
+              <button onclick="toggleGoldPrompt()" id="btn-toggle-gold" class="text-xs font-semibold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1">
+                👁️ ดูเฉลย Prompt ต้นแบบระดับ 100 คะแนนเต็ม (Gold Standard)
+              </button>
+              <div id="gold-prompt-container" class="mt-3 p-4 rounded-xl bg-slate-950 text-slate-100 border border-slate-800 text-xs font-mono whitespace-pre-wrap hidden custom-scrollbar max-h-80 overflow-y-auto"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 5: DASHBOARD & READINESS ANALYTICS -->
+    <!-- ========================================================================= -->
+    <section id="tab-dashboard" class="tab-pane hidden space-y-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div class="text-xs text-slate-500">Multiple Choice Score</div>
+          <div class="text-3xl font-bold text-brand-600 mt-1" id="dash-mcq-score">0%</div>
+          <div class="text-xs text-slate-400 mt-1" id="dash-mcq-sub">ตอบแล้ว 0/20 ข้อ</div>
+        </div>
+        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div class="text-xs text-slate-500">Coding Tests Passed</div>
+          <div class="text-3xl font-bold text-emerald-600 mt-1" id="dash-coding-score">0%</div>
+          <div class="text-xs text-slate-400 mt-1" id="dash-coding-sub">ผ่าน 0/4 โจทย์</div>
+        </div>
+        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div class="text-xs text-slate-500">AI Prompt Score เฉลี่ย</div>
+          <div class="text-3xl font-bold text-indigo-600 mt-1" id="dash-prompt-score">0/100</div>
+          <div class="text-xs text-slate-400 mt-1" id="dash-prompt-sub">ซ้อมแล้ว 0/4 โจทย์</div>
+        </div>
+        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div class="text-xs text-slate-500">Overall Readiness</div>
+          <div class="text-xl font-bold text-slate-800 dark:text-slate-100 mt-2" id="dash-readiness-badge">ยังไม่เริ่มทดสอบ</div>
+          <div class="text-xs text-slate-400 mt-1">เป้าหมาย: Senior/Lead CoE</div>
+        </div>
+      </div>
+
+      <!-- Readiness by Competency Category -->
+      <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+        <h3 class="font-bold text-base text-slate-900 dark:text-white mb-4">ความพร้อมแยกตาม 6 หมวด Competency</h3>
+        <div class="space-y-4" id="dash-category-progress">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+    </section>
+
+  
+    <!-- Fullscreen Study Reader Modal -->
+    <div id="study-reader-modal" class="fixed inset-0 z-[100] bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-2 sm:p-4 md:p-6 transition-all duration-300">
+      <div class="w-full max-w-6xl h-full max-h-[92vh] bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col overflow-hidden">
+        <!-- Reader Header Bar -->
+        <div class="h-16 px-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0 bg-slate-50/80 dark:bg-slate-900/80 backdrop-blur">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center font-bold text-lg">
+              📖
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h2 id="reader-modal-skill-name" class="font-bold text-sm sm:text-base text-slate-900 dark:text-white leading-tight"></h2>
+                <span id="reader-modal-badge" class="text-[10px] px-2 py-0.5 rounded-full font-semibold bg-brand-100 dark:bg-brand-950 text-brand-700 dark:text-brand-300">Senior/Lead Guide</span>
+              </div>
+              <p id="reader-modal-subtitle" class="text-xs text-slate-400 truncate max-w-md hidden sm:block"></p>
+            </div>
+          </div>
+
+          <!-- Reader Utilities & Close -->
+          <div class="flex items-center gap-2">
+            <div class="hidden sm:flex items-center gap-1 text-xs text-slate-500 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-lg">
+              <span>⏱️ ใช้เวลาอ่าน: <span id="reader-reading-time" class="font-semibold text-slate-700 dark:text-slate-200">25 นาที</span></span>
+            </div>
+            <button onclick="changeReaderFontSize(-1)" class="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold" title="ลดขนาดตัวอักษร">A-</button>
+            <button onclick="changeReaderFontSize(1)" class="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 text-sm font-bold" title="เพิ่มขนาดตัวอักษร">A+</button>
+            <button onclick="closeStudyReader()" class="p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition text-lg leading-none" title="ปิดหน้าต่าง (ESC)">
+              ✕
+            </button>
+          </div>
+        </div>
+
+        <!-- Reader Body (Sidebar + Content) -->
+        <div class="flex-1 flex overflow-hidden">
+          <!-- Left Sidebar: Table of Contents -->
+          <aside class="w-64 sm:w-72 border-r border-slate-200 dark:border-slate-800 p-4 overflow-y-auto custom-scrollbar shrink-0 bg-slate-50/50 dark:bg-slate-950/40 hidden md:block">
+            <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 px-2">📑 สารบัญบทเรียน</div>
+            <nav id="reader-toc-list" class="space-y-1.5">
+              <!-- Injected via JS -->
+            </nav>
+
+            <div class="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800 px-2">
+              <div class="text-xs text-slate-400 mb-1">ความคืบหน้าบทเรียน</div>
+              <div class="w-full h-1.5 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
+                <div id="reader-progress-bar" class="h-full bg-brand-500 rounded-full transition-all duration-300" style="width: 0%"></div>
+              </div>
+              <div id="reader-progress-text" class="text-[11px] text-slate-500 mt-1 text-right">บทที่ 1 จาก 6</div>
+            </div>
+          </aside>
+
+          <!-- Right Content Area -->
+          <main id="reader-content-scroll" class="flex-1 overflow-y-auto p-5 sm:p-8 lg:p-10 custom-scrollbar space-y-8 bg-white dark:bg-slate-900">
+            <!-- Chapter Header -->
+            <div class="border-b border-slate-100 dark:border-slate-800 pb-5">
+              <span id="reader-chapter-pill" class="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-brand-100 dark:bg-brand-950 text-brand-700 dark:text-brand-300 inline-block mb-2"></span>
+              <h1 id="reader-chapter-title" class="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 dark:text-white tracking-tight"></h1>
+              <p id="reader-chapter-summary" class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-2 leading-relaxed"></p>
+            </div>
+
+            <!-- Chapter Content -->
+            <article id="reader-article-content" class="max-w-none text-slate-700 dark:text-slate-300 leading-relaxed text-sm sm:text-base space-y-4">
+              <!-- Injected via Markdown-to-HTML formatter in JS -->
+            </article>
+
+            <!-- Checkpoint Quiz Box -->
+            <div id="reader-quiz-section" class="pt-6 border-t border-slate-200 dark:border-slate-800 space-y-4 hidden">
+              <!-- Checkpoint Quizzes Injected via JS -->
+            </div>
+
+            <!-- Chapter Bottom Navigation -->
+            <div class="pt-6 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+              <button onclick="navigateReaderChapter(-1)" id="btn-reader-prev" class="px-4 py-2 text-xs sm:text-sm font-medium rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-1.5">
+                ← บทย่อยก่อนหน้า
+              </button>
+              <button onclick="navigateReaderChapter(1)" id="btn-reader-next" class="px-5 py-2 text-xs sm:text-sm font-semibold rounded-xl bg-brand-600 hover:bg-brand-500 text-white transition flex items-center gap-1.5 shadow-sm">
+                บทย่อยถัดไป →
+              </button>
+            </div>
+          </main>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Global Application Logic & In-Memory Database -->
+  <script>
+    const SKILLS_DATA = [{"id": 1, "category": "Software Design and Architecture", "name": "Microservices", "definition": "Developing and managing applications as a collection of loosely coupled, independently scalable services that communicate over well-defined APIs.", "matching": {"junior": "Beginner", "senior": "Intermediate", "lead": "Intermediate", "expert": "Advance"}, "beginner": ["เข้าใจความต่าง Monolith vs Microservices", "สร้าง Simple microservices ตามโจทย์ธุรกิจ", "เชื่อมต่อ Services ผ่าน HTTP calls และจัดการ error เบื้องต้น"], "intermediate": ["ออกแบบ Cross-cutting concerns (logging, monitoring, auth) ด้วย middleware", "เชื่อมต่อ Event-driven ด้วย RabbitMQ, Kafka", "จัดการข้อมูลข้าม Service (Shared-nothing, Eventual consistency)", "ใช้ Security ขั้นสูง (OAuth2, JWT, mTLS, Zero-trust)"], "advance": ["สถาปัตยกรรมระดับสูง: CQRS, Saga Pattern, Circuit Breaker, API Composition", "ออกแบบระบบ Resilience & Fault tolerance at scale", "นำทีม Migrate จาก Monolith สู่ Microservices"], "exam_tip": "ข้อสอบมักออกเรื่อง Distributed Transaction (Saga Pattern), Event-Driven ข้าม Service, และการรับมือกรณี Service ล่มด้วย Circuit Breaker"}, {"id": 2, "category": "Software Design and Architecture", "name": "System Design", "definition": "Designing systems to meet specified requirements and agreed systems architectures.", "matching": {"junior": "Beginner", "senior": "Intermediate", "lead": "Intermediate", "expert": "Advance"}, "beginner": ["ออกแบบ Components อิสระด้วย Class diagram, Flowchart", "ใช้เครื่องมือ modeling (draw.io, Lucidchart)", "เขียนเอกสาร Technical spec โครงสร้างและพฤติกรรมระบบ"], "intermediate": ["ออกแบบระบบ Scalable & Reliable ที่มีหลาย Component", "ประเมินเปรียบเทียบตัวเลือกสถาปัตยกรรมด้วย PlantUML, UML", "จำลอง Prototype พฤติกรรมระบบให้ Stakeholders อนุมัติ"], "advance": ["วาง Enterprise-scale Distributed Architecture สมดุลทั้ง Performance, Security, Reliability", "ใช้ Framework เช่น TOGAF, ArchiMate", "ประเมินและบริหารความเสี่ยงด้าน System Design ทั้งองค์กร"], "exam_tip": "เน้นโจทย์สถานการณ์ขยายระบบรับ High Traffic, Caching Strategies (Cache-Aside, Write-Through), และ Trade-offs (CAP Theorem)"}, {"id": 3, "category": "Software Design and Architecture", "name": "Database Design", "definition": "Design and maintaining plans, policies and practices for the formal management of data and information assets across the data lifecycle.", "matching": {"junior": "Beginner", "senior": "Intermediate", "lead": "Intermediate", "expert": "Advance"}, "beginner": ["ใช้ NoSQL (MongoDB, Redis) จัดเก็บ key-value/document", "ทำ Data Modeling ER diagram และกำหนด Relational Schema", "ทำ Backup เบื้องต้น (pg_dump, mongodump) และเข้าใจ ACID"], "intermediate": ["Normalize ฐานข้อมูลเชิงสัมพันธ์", "ผสานการใช้ SQL และ NoSQL ในระบบเดียวกัน", "จูน Database ผ่าน Query Plan, Indexing, Connection pool", "จัดการ Database Migration และ Versioning"], "advance": ["สถาปัตยกรรมระดับ Enterprise รองรับ Scalability, Availability", "ออกแบบ Polyglot Persistence ตาม Data access pattern", "จูนประสิทธิภาพขั้นสูงด้วย Partitioning, Sharding, In-memory cache", "วาง Data Lake / Data Warehouse"], "exam_tip": "มักออกเรื่องการเลือกใช้ SQL vs NoSQL, การทำ Indexing, การแก้ปัญหา Lock/Deadlock, และการทำ Database Migration โดยระบบไม่หยุดชะงัก (Zero-Downtime)"}, {"id": 4, "category": "Software Engineering & Development", "name": "GIT", "definition": "Managing code versions", "matching": {"junior": "Beginner", "senior": "Intermediate", "lead": "Intermediate", "expert": "Advance"}, "beginner": ["ใช้ Git/GitHub จัดการซอร์สโค้ดและติดตามประวัติ", "Commit, merge, และแก้ conflict เบื้องต้น", "ทำงานร่วมกันผ่าน PR/Code Review บน GitHub/GitLab", "ทำตาม Git Flow พื้นฐาน"], "intermediate": ["ออกแบบ Advanced branching/merging workflow (feature, release, hotfix)", "แก้ Complex merge conflict และใช้ rebase เพื่อรักษา Linear history", "จัดการ Tag และ Release management", "ใช้ Cherry-pick, Stash, Patch อย่างชำนาญ"], "advance": ["วางโครงสร้าง Monorepo vs Multi-repo, Submodules", "เป็น Mentor วาง Git Best practices ให้ทั้งทีม", "นำทีม Migrate ระบบ Version Control ขนาดใหญ่"], "exam_tip": "ออกเรื่อง Rebase vs Merge, การแก้ Conflict, การใช้ Cherry-pick เพื่อ Hotfix งานด่วน, และการ Revert commit บน Production อย่างปลอดภัย"}, {"id": 5, "category": "Software Engineering & Development", "name": "SQL", "definition": "Developing and implementing SQL for querying data from database using proper and high performance SQL statement", "matching": {"junior": "Beginner", "senior": "Intermediate", "lead": "Intermediate", "expert": "Advance"}, "beginner": ["เขียน Query พื้นฐาน (SELECT, INSERT, UPDATE, DELETE)", "เข้าใจ Relational concepts, Primary Key, Normalization"], "intermediate": ["เขียน Query ซับซ้อนด้วย Subqueries, CTEs, Window Functions", "ใช้ Multi-table JOINs อย่างมีประสิทธิภาพ", "ปรับปรุง Query ด้วย Index, Proper filtering, Query Execution Plan", "รักษา Data Integrity Constraints"], "advance": ["วางกลยุทธ์ Query Optimization สำหรับข้อมูลขนาดใหญ่", "วิเคราะห์และจูน Performance ด้วย Execution Plans และ Profiling", "เขียน Stored Procedures, Triggers, UDFs", "จัดการ Transactions, Concurrency, Isolation Levels, Locking"], "exam_tip": "มักให้ Execution Plan (EXPLAIN ANALYZE) มาแล้วถามว่าทำไม Query ช้า (เช่น ติด Sequential scan) และจะปรับ Index หรือเขียนใหม่ด้วย CTE อย่างไร"}, {"id": 6, "category": "Software Engineering & Development", "name": "Monitoring and Logging", "definition": "Implementing monitoring, logging, and observability solutions to ensure system reliability, performance, and fast incident resolution.", "matching": {"junior": "Beginner", "senior": "Intermediate", "lead": "Intermediate", "expert": "Advance"}, "beginner": ["อ่านและตีความ Logs, Metrics, Traces เพื่อช่วย Triage เหตุการณ์ผิดปกติ", "ปฏิบัติตามกระบวนการแจ้งเตือน Incident Response เบื้องต้น", "เปิดและติดตาม Ticket ในระบบ"], "intermediate": ["ออกแบบ Observability ครอบคลุม Logs, Metrics, Traces (ELK, Prometheus, Grafana, Datadog)", "ทำ Distributed Tracing และ APM ข้าม Microservices", "เป็นผู้นำทำ Root Cause Analysis (Post-mortem)"], "advance": ["วาง Enterprise Observability Platform (OpenTelemetry Pipeline)", "กำหนดมาตรฐาน Site Reliability Engineering (SRE, SLI/SLO, Error Budget)", "สร้างวัฒนธรรม Blameless Post-mortem ทั่วองค์กร"], "exam_tip": "โจทย์เน้นเรื่อง Distributed Tracing ในระบบ Microservices เพื่อหาจุดเกิด Latency คอขวด และการตั้งค่า Alert ที่มีประสิทธิภาพ"}, {"id": 7, "category": "Software Engineering & Development", "name": "Web & Mobile Development (including Backend)", "definition": "Designing and developing user-centered software applications across web and mobile platforms... as well as designing and integrating APIs...", "matching": {"junior": "Beginner", "senior": "Intermediate", "lead": "Advance", "expert": "Advance"}, "beginner": ["พัฒนา UI เว็บและโมบายล์ (HTML5, CSS3, JS, React/Vue/Flutter)", "ป้องกันช่องโหว่พื้นฐาน (XSS, CSRF)", "สร้าง RESTful API และเชื่อมต่อ DB (Express, Flask, MongoDB)", "ออกแบบ Endpoint และทำเอกสาร (Swagger, Postman)"], "intermediate": ["พัฒนา App ซับซ้อน (SPA, SSR, State Management, Offline sync)", "จูน Performance (Code splitting, Lazy loading, Caching)", "สร้าง REST & GraphQL API สถาปัตยกรรม Controller-Service-Repository", "ทำ API Versioning, Rate Limiting, Input Sanitization"], "advance": ["วางสถาปัตยกรรม Micro-frontends, Modular Mobile, Distributed Backend", "นำทีมกำหนดมาตรฐาน API-First และ Contract-First Development (OpenAPI)", "วางกลยุทธ์ Security & Compliance ทั่วทั้งระบบ"], "exam_tip": "เน้นเรื่องการออกแบบ REST API ที่ดี (Idempotency, Pagination, Error Handling) และการป้องกันช่องโหว่ความปลอดภัยฝั่ง Frontend (XSS, CORS)"}, {"id": 8, "category": "Software Engineering & Development", "name": "OOP (Object-Oriented Programming)", "definition": "Applying Object-Oriented Programming principles to structure code using objects, encapsulation, inheritance, and polymorphism for maintainable and reusable software design.", "matching": {"junior": "Beginner", "senior": "Intermediate", "lead": "Intermediate", "expert": "Advance"}, "beginner": ["เข้าใจ 4 หัวใจ: Classes, Objects, Methods, Attributes", "ใช้ Encapsulation และ Inheritance ในการจัดระเบียบและใช้โค้ดซ้ำ"], "intermediate": ["ออกแบบ Class Hierarchies ด้วย Polymorphism", "ใช้ Composition แทนการใช้ Inheritance เกินความจำเป็น", "ใช้ Access Modifiers และ Interface/Abstract Class", "Refactor โค้ดตามหลัก SOLID Principles และ Design Patterns"], "advance": ["วางสถาปัตยกรรมระบบใหญ่ด้วย Advanced OOP Patterns (Factory, Strategy, Observer, Decorator)", "จูนความเร็วและ Maintainability ของ OOP ในระบบ Legacy", "ผสาน OOP ร่วมกับ Test-Driven Development (TDD)"], "exam_tip": "ข้อสอบเน้นหลัก SOLID (โดยเฉพาะ S, O, L) และการ Refactor โค้ดเงื่อนไขซับซ้อนให้กลายเป็น Strategy Pattern หรือ Factory Pattern"}, {"id": 9, "category": "Software Engineering & Development", "name": "Unit & Functional Testing", "definition": "Planning, designing and conducting tests to verify that systems, components and products meet specified requirements and quality standards", "matching": {"junior": "Beginner", "senior": "Intermediate", "lead": "Intermediate", "expert": "Advance"}, "beginner": ["เขียน Unit Test ด้วย Framework มาตรฐาน (JUnit, Jest, PyTest)", "เขียน Assertions และ Mocking เบื้องต้นเพื่อแยกส่วนทดสอบ"], "intermediate": ["เพิ่มและรักษา Test Coverage ให้ถึงเกณฑ์ (JaCoCo, Istanbul, SonarQube)", "อุดช่องโหว่ Edge cases ในโค้ดเพื่อเพิ่มความน่าเชื่อถือ", "วางกลยุทธ์ Mocking & Stubbing สำหรับ External Dependencies"], "advance": ["กำหนด Testing Strategy ระดับองค์กร (Unit, Integration, E2E)", "สร้าง Test Guidelines เพิ่มความเร็วและลดความซ้ำซ้อนของ Test", "สร้างวัฒนธรรม Test-driven culture และคุณภาพเชิงรุก"], "exam_tip": "ออกเรื่องการแยก Mock vs Stub, การเขียน Test Case ดัก Edge Cases ให้ครบ 100% Branch Coverage, และการแยกทดสอบ Business Logic ให้เป็นอิสระจาก DB"}, {"id": 10, "category": "Infrastructure & DevOps", "name": "Container", "definition": "Deploying, managing, and scaling containerized applications", "matching": {"junior": "Beginner", "senior": "Intermediate", "lead": "Intermediate", "expert": "Advance"}, "beginner": ["เขียน Dockerfile พื้นฐานสำหรับ Packaging และ Isolated environment", "ดีบักและแก้ไขปัญหา Container เบื้องต้น"], "intermediate": ["ตั้งค่า Networking และ Persistent Storage ขั้นสูง", "นำทีม Migrate แอปพลิเคชันสู่ Container", "ประยุกต์ใช้ Security Policy ใน Container Image (Non-root, Multi-stage)"], "advance": ["วาง Container Governance Framework (Trivy image scanning, ELK logging)", "สร้างมาตรฐาน Container ระดับองค์กร"], "exam_tip": "เน้นเรื่อง Multi-stage build เพื่อลดขนาด Image, Security Hardening (ไม่รันด้วย root, ไม่ฝัง Secret ใน Image)"}, {"id": 11, "category": "Infrastructure & DevOps", "name": "CI/CD", "definition": "Automating software delivery and infrastructure workflows", "matching": {"junior": "Beginner", "senior": "Intermediate", "lead": "Intermediate", "expert": "Advance"}, "beginner": ["เขียน Pipeline เบื้องต้นสำหรับ Build & Deploy", "จัดการสคริปต์ Compile, Test, Package", "มอนิเตอร์และแก้ไข Pipeline เมื่อ Build หรือ Test ไม่ผ่าน"], "intermediate": ["ออกแบบ CI/CD รองรับ Multi-environment ด้วย Azure DevOps / GitLab / GitHub Actions", "ผสาน Automated Security & Quality Scanning (SonarQube, OWASP ZAP)", "ทำ Automated Build & Test และ Repeatable Deployments"], "advance": ["สร้าง GitOps Pipeline สำหรับ Continuous Delivery ข้ามหลาย Cluster", "ดูแลความปลอดภัย Scalability และ Monitoring ของ Pipeline ทั้งหมด", "นำทีมวาง DevOps Lifecycle ครบวงจรตั้งแต่ Planning ถึง Production"], "exam_tip": "โจทย์เน้นการแทรก Quality Gate, การจัดการ Environment Config และ Secret อย่างปลอดภัย, และกลยุทธ์ Deployment (Blue/Green, Canary)"}, {"id": 12, "category": "Infrastructure & DevOps", "name": "Cloud", "definition": "Understanding cloud platforms by exploring core concepts, services, architectures, and best practices...", "matching": {"junior": "Beginner", "senior": "Intermediate", "lead": "Intermediate", "expert": "Advance"}, "beginner": ["เข้าใจ Cloud Models (IaaS, PaaS, SaaS) และ Cloud Providers (AWS, Azure, GCP)", "เข้าใจบทบาทของ Containerization ในสภาพแวดล้อม Cloud"], "intermediate": ["อธิบายการเชื่อมต่อระหว่าง Cloud Services ใน System Architecture", "ประเมินและเปรียบเทียบ Cost & Pricing Model", "ประยุกต์ใช้ Security Best Practices (IAM, Encryption, SLA compliance)"], "advance": ["ประเมิน Trade-offs ของ Cloud Services (เช่น Lambda vs EC2)", "ออกแบบ Cloud-native Microservices และ Serverless", "วางกลยุทธ์ Multi-cloud และ Enterprise Framework (Well-Architected Framework)"], "exam_tip": "เน้นหลักการเลือก Service ให้คุ้มค่าและรองรับ Scale, การกำหนดสิทธิ์ Least Privilege ใน IAM, และการออกแบบ High Availability (Multi-AZ)"}, {"id": 13, "category": "Security", "name": "Application Security", "definition": "Creating and monitoring organizational policies, standards, and practices to secure systems, processes, and protect data and information.", "matching": {"junior": "Beginner", "senior": "Intermediate", "lead": "Intermediate", "expert": "Advance"}, "beginner": ["ป้องกัน OWASP Top 10 เบื้องต้น (Validate input, Sanitize output)", "ทำ Authentication พื้นฐาน (OAuth 2.0, Tokens)", "เข้าใจ Data Privacy (PDPA/GDPR, PII Anonymization, Encryption)", "ใช้ Static Scanner (SonarQube, ZAP)"], "intermediate": ["วางมาตรการความปลอดภัยรอบด้าน (Encryption, JWT, Audit logging)", "พัฒนาระบบ RBAC และ MFA (OAuth2, SAML, Okta)", "ป้องกัน API Security (Rate limiting, WAF, Token-based)", "ดูแล Security Incident Response"], "advance": ["ออกแบบสถาปัตยกรรม Zero-Trust และ Identity-first Access Control", "นำทีม DevSecOps บูรณาการความปลอดภัยใน CI/CD", "ทำ Advanced Threat Modeling (STRIDE) และ Risk Assessment"], "exam_tip": "โจทย์มักให้โค้ดที่มีช่องโหว่ความปลอดภัย เช่น SQL Injection, IDOR, XSS, Hardcoded Secret แล้วให้วิเคราะห์และระบุวิธีแก้ไขที่ถูกต้อง"}, {"id": 14, "category": "ProblemSolving", "name": "Coding", "definition": "Developing, optimizing, and leading complex software solutions using multiple programming languages, paradigms, and best practices", "matching": {"junior": "Beginner", "senior": "Intermediate", "lead": "Intermediate", "expert": "Advance"}, "beginner": ["ใช้ 1-2 ภาษาหลักแก้ปัญหา Automation หรือ Data เบื้องต้น", "เขียนโค้ดตาม Clean Code Guidelines (Readable, Indentation, Naming)", "ดีบักและประยุกต์ใช้อัลกอริทึมพื้นฐาน (Loops, Conditions, Sorting)"], "intermediate": ["เชี่ยวชาญ 2-3 ภาษาพร้อม Best Practices", "ออกแบบ Modular, Reusable, High-performance code ด้วย Design Patterns", "Refactor โค้ด Legacy เพื่อลดความซ้ำซ้อนและเพิ่มความเร็ว", "ใช้อัลกอริทึมขั้นสูงเพื่อ Optimize ประสิทธิภาพ (Time/Space Complexity)"], "advance": ["เป็นผู้นำออกแบบระบบ Multi-language Architecture", "เชี่ยวชาญหลากหลาย Paradigm (OOP, Functional, Concurrent)", "กำหนด Organization-wide Coding Standards"], "exam_tip": "ข้อสอบข้อเขียนโค้ดจะให้โจทย์ที่มีปัญหาเรื่อง Complexity O(n^2) หรือ Arrow Anti-pattern แล้วให้ Refactor ให้เป็น Clean Code และรวดเร็วขึ้น"}, {"id": 15, "category": "future skill", "name": "AI & Prompt engineer", "definition": "Applying AI and machine learning to build systems that learn, adapt, and make data-driven decisions.", "matching": {"junior": "Beginner", "senior": "Intermediate", "lead": "Intermediate", "expert": "Intermediate"}, "beginner": ["ใช้ AI Coding Assistants (GitHub Copilot) ช่วยแนะนำโค้ดและ Refactor logic", "เขียน Basic Prompting และตระหนักถึง Ethical & Security usage"], "intermediate": ["สร้าง Application เชื่อมต่อ AI services (NLP, Vision)", "นำ AI features ขึ้น Production พร้อม Monitoring & Retraining", "ประยุกต์ใช้ Advanced Prompt Engineering (Structured Input/Output, Few-shot, Context Optimization)"], "advance": ["ออกแบบ MLOps Pipeline (Kubeflow) สำหรับ CI/CD ของโมเดล", "วางกลยุทธ์ AI Adoption และ ROI Planning", "กำหนด AI Governance & Ethics Policy"], "exam_tip": "การสอบครั้งนี้เน้นการ Optimize Context: ให้โจทย์งานจริงมา แล้วให้เขียน Prompt เพื่อให้ AI ให้คำตอบที่พร้อมใช้งานจริงมากที่สุด ตัด Noise และใส่ Guardrails รัดกุม"}];
+    const MCQ_DATA = [{"id": 1, "skill": "Microservices", "category": "Software Design and Architecture", "type": "single", "question": "ในสถาปัตยกรรม Microservices เมื่อ Order Service ต้องการตัดสต็อกใน Inventory Service และตัดเงินใน Payment Service หากการตัดเงินล้มเหลวและต้องยกเลิกการตัดสต็อกย้อนหลังเพื่อความถูกต้องของข้อมูล (Data Consistency) รูปแบบการจัดการใดเหมาะสมที่สุด?", "options": ["ใช้ Two-Phase Commit (2PC) ล็อค Table ในทุกฐานข้อมูลข้าม Network", "ใช้ Saga Pattern (Compensating Transactions) เพื่อยิง Event ยกเลิกย้อนหลัง", "รวม Database ของทุก Service เป็นก้อนเดียวเพื่อใช้ RDBMS Transaction", "ปล่อยให้ข้อมูลไม่ตรงกันชั่วคราวและให้แอดมินมาแก้เองตอนสิ้นวัน"], "correct": [1], "explanation": "ในระบบ Microservices ข้อมูลถูกแยกเก็บแบบ Shared-Nothing การใช้ Two-Phase Commit (2PC) มักเกิดคอขวดและ Single Point of Failure ดังนั้น Saga Pattern โดยการส่ง Compensating Transaction ย้อนกลับ จึงเป็น Best Practice ในการจัดการ Eventual Consistency ข้าม Service"}, {"id": 2, "skill": "System Design", "category": "Software Design and Architecture", "type": "multi", "question": "ระบบ e-Commerce กำลังจะจัดแคมเปญ Flash Sale 9.9 ซึ่งคาดว่าจะมี Traffic พุ่งสูงขึ้น 50 เท่าในช่วง 5 นาทีแรก กลยุทธ์ใดต่อไปนี้ช่วยป้องกัน Database หลักล่มได้อย่างมีประสิทธิภาพ? [เลือก 2 ข้อที่ถูกต้อง]", "options": ["ใช้ Caching Strategy แบบ Cache-Aside หรือ Read-Through ด้วย Redis เพื่อลด Query ตรงไปที่ DB", "ปิดการทำ Validation ที่หน้าบ้านเพื่อให้ Request วิ่งเข้า DB ได้เร็วที่สุด", "ใช้ Rate Limiting ร่วมกับ Message Queue (เช่น Kafka, RabbitMQ) เพื่อ Throttle และ Buffering คำสั่งซื้อ", "เพิ่มขนาด Transaction Timeout ใน Database ให้ยาวขึ้นเป็น 5 นาที"], "correct": [0, 2], "explanation": "การใช้ Redis ช่วยลดโหลดการอ่าน (Read traffic) ได้ถึง 80-90% และการใช้ Message Queue ช่วยทำหน้าที่เป็น Buffer รับโหลดเขียน (Write traffic) ไม่ให้กระแทก Database ทันที ส่วนการปิด validation หรือเพิ่ม timeout มีแต่จะทำให้ DB ล่มเร็วกว่าเดิม"}, {"id": 3, "skill": "Database Design", "category": "Software Design and Architecture", "type": "single", "question": "บริษัทต้องการพัฒนาระบบที่มี 2 ฟังก์ชันหลัก: 1) ระบบโอนเงินที่ต้องการคุณสมบัติ ACID อย่างเคร่งครัด 2) ระบบค้นหาสินค้าแบบ Full-text Search ค้นหาตามคำใกล้เคียงอย่างรวดเร็ว แนวทางสถาปัตยกรรมฐานข้อมูลใดเหมาะสมที่สุด?", "options": ["ใช้ MongoDB เพียงตัวเดียวจัดการทั้งระบบโอนเงินและระบบค้นหา", "ใช้ Elasticsearch เป็น Database หลักตัวเดียวสำหรับทั้งระบบ", "ใช้ Polyglot Persistence: ใช้ RDBMS (เช่น PostgreSQL) สำหรับระบบโอนเงิน และ Sync ข้อมูลไป Elasticsearch สำหรับระบบค้นหา", "เขียนคำสั่ง LIKE '%keyword%' บนตาราง Transaction เดิมเพื่อประหยัดทรัพยากร"], "correct": [2], "explanation": "Polyglot Persistence คือแนวปฏิบัติในการเลือก Database ให้ตรงกับโจทย์การเข้าถึงข้อมูล (Data Access Pattern) โดย RDBMS เหมาะกับงาน Financial ACID ส่วน Search Engine (Elasticsearch) เหมาะกับงาน Full-text search"}, {"id": 4, "skill": "GIT", "category": "Software Engineering & Development", "type": "single", "question": "ทีมพบว่ามี Bug บน Production และต้องการนำ Commit แก้ไขเฉพาะจุด (Commit hash: `a1b2c3d`) จาก Branch `feature/auth` ไปใส่ใน Branch `hotfix/prod` ทันที โดยไม่ต้องการนำโค้ดใน Commit อื่นๆ ของ branch นั้นไปด้วย ควรใช้คำสั่งใด?", "options": ["git merge feature/auth", "git rebase feature/auth hotfix/prod", "git cherry-pick a1b2c3d", "git checkout -b hotfix/prod feature/auth"], "correct": [2], "explanation": "`git cherry-pick <commit-hash>` คือคำสั่งที่ใช้ดึงเฉพาะ commit ที่ระบุมาผสานเข้ากับ branch ปัจจุบันโดยตรง เหมาะกับการทำ Hotfix อย่างยิ่ง"}, {"id": 5, "skill": "GIT", "category": "Software Engineering & Development", "type": "multi", "question": "เพื่อรักษาประวัติการ Commit บน Main Branch ให้เป็นเส้นตรง อ่านง่าย (Linear History) และหลีกเลี่ยงข้อความ 'Merge branch ... into ...' ที่รกประวัติ ควรปฏิบัติอย่างไร? [เลือก 2 ข้อที่ถูกต้อง]", "options": ["ใช้คำสั่ง `git rebase main` บน Feature branch ก่อนเปิด Pull Request", "ใช้คำสั่ง `git push --force` ทับ main branch ทุกครั้งที่เขียนโค้ดเสร็จ", "ตั้งค่า Pull Request ให้ทำการ Merge แบบ 'Squash and merge' หรือ 'Rebase and merge'", "ห้ามทำการ Code Review เพื่อให้ Merge ได้อย่างรวดเร็ว"], "correct": [0, 2], "explanation": "การ rebase feature branch กับ main ร่วมกับการตั้งค่าการรวมโค้ดแบบ Squash หรือ Rebase and Merge จะช่วยรวบ commit ย่อยๆ และเรียงลำดับประวัติให้เป็นเส้นตรง ปราศจาก merge commit ฟุ่มเฟือย"}, {"id": 6, "skill": "SQL", "category": "Software Engineering & Development", "type": "single", "question": "จากการรัน `EXPLAIN ANALYZE` บน PostgreSQL พบว่า Query ดังกล่าวช้ามากเนื่องจากเกิด `Seq Scan on orders (cost=0.00..185000.00)` โดยมีเงื่อนไข `WHERE customer_id = 450 AND order_date >= '2026-01-01'` วิธีการแก้ปัญหาที่ช่วยลด I/O และทำให้ Query ทำงานเร็วที่สุดคืออะไร?", "options": ["เปลี่ยนจาก PostgreSQL ไปใช้ NoSQL ทันที", "สร้าง Composite Index: `CREATE INDEX idx_orders_cust_date ON orders(customer_id, order_date);`", "เขียน Query ใหม่โดยตัดเงื่อนไข `order_date` ทิ้งเพื่อไม่ให้กรองข้อมูล", "สร้าง Index แยก 2 ตัวคือ บน customer_id ตัวหนึ่ง และบน order_date อีกตัวหนึ่ง"], "correct": [1], "explanation": "การสร้าง Composite Index บน `(customer_id, order_date)` เรียงจากคอลัมน์ที่เป็น Equality filter (`customer_id = 450`) ก่อน Range filter (`order_date >= ...`) จะช่วยให้ Database Engine ทำ Index Scan ได้ตรงจุดและตัด Sequential Scan ทิ้งไปได้ทันที"}, {"id": 7, "skill": "SQL", "category": "Software Engineering & Development", "type": "multi", "question": "ปัญหา N+1 Query เกิดขึ้นเมื่อระบบดึงข้อมูล Parent 1 ครั้ง แล้ววน Loop ยิง Query ย่อยอีก N ครั้งเพื่อดึง Child records วิธีใดต่อไปนี้สามารถแก้ไขปัญหานี้ได้อย่างถูกต้อง? [เลือก 2 ข้อที่ถูกต้อง]", "options": ["ใช้คำสั่ง JOIN เพื่อรวมตาราง Parent และ Child แล้วดึงข้อมูลทั้งหมดออกมาใน Query เดียว", "ใส่ `sleep(1)` ใน loop เพื่อไม่ให้ Database ทำงานหนักเกินไป", "ใช้เทคนิค Batch Fetching (Eager Loading) เช่น ดึงข้อมูล Child ด้วย `WHERE parent_id IN (...)` ในครั้งเดียว", "เขียนคำสั่ง DROP TABLE แล้วสร้างใหม่ทุกครั้งที่ดึงข้อมูล"], "correct": [0, 2], "explanation": "การแก้ N+1 Query ทำได้โดยการดึงข้อมูลร่วมกันผ่าน JOIN หรือการใช้ Batch Fetching (เช่น `IN (?, ?, ...)`) เพื่อเปลี่ยนจาก N+1 รอบให้เหลือเพียง 1-2 Queries เท่านั้น"}, {"id": 8, "skill": "Monitoring and Logging", "category": "Software Engineering & Development", "type": "single", "question": "เมื่อมีผู้ใช้งานรายงานว่า API Checkout ตอบสนองช้าผิดปกติ (Latency สูงเกิน 10 วินาที) ในระบบ Microservices ที่มีมากกว่า 20 เซอร์วิส เครื่องมือหรือเทคนิคใดช่วยระบุ 'ตำแหน่งคอขวดที่แท้จริง' ได้รวดเร็วและแม่นยำที่สุด?", "options": ["รีสตาร์ทเซิร์ฟเวอร์ทุกตัวพร้อมกัน", "เปิดดูไฟล์ Syslog ของ Linux เครื่องละไฟล์", "ใช้ Distributed Tracing (APM เช่น OpenTelemetry, Jaeger, Datadog) เพื่อดู Span และ Timeline ของแต่ละ Hop", "ส่งอีเมลแจ้งเตือนทุกครั้งที่มี Request เข้ามา"], "correct": [2], "explanation": "Distributed Tracing จะส่ง Trace ID ติดไปกับทุก Request ข้าม Service ทำให้เราเห็น Waterfall Timeline ชัดเจนว่าเวลา 10 วินาทีนั้นเสียไปที่ Service ไหน หรือ SQL Query เส้นใด"}, {"id": 9, "skill": "Web & Mobile Development (including Backend)", "category": "Software Engineering & Development", "type": "single", "question": "ในการออกแบบ RESTful API สำหรับการ 'สร้างรายการสั่งซื้อและชำระเงิน' (Create Payment) แนวทางใดช่วยป้องกันไม่ให้ระบบตัดเงินซ้ำซ้อนกรณีเน็ตเวิร์กหลุดแล้วผู้ใช้กดปุ่มชำระเงินซ้ำ (Idempotency)?", "options": ["เปลี่ยนจาก POST เป็น GET", "กำหนดให้ Request ต้องส่ง Header `Idempotency-Key` (UUID) มาด้วย และตรวจสอบ Key ใน Cache/DB ก่อนประมวลผล", "ปิดปุ่มบนหน้าเว็บเพียงอย่างเดียวก็เพียงพอแล้ว", "คืนค่า Error 500 เสมอเมื่อมี Request ซ้ำ"], "correct": [1], "explanation": "การใช้ `Idempotency-Key` บน HTTP POST เป็นมาตรฐานสากล (เช่น Stripe API) โดยเซิร์ฟเวอร์จะจดจำ Key หากพบ Key เดิมที่กำลังประมวลผลหรือทำสำเร็จแล้ว จะคืนผลลัพธ์เดิมโดยไม่ตัดเงินซ้ำ การป้องกันแค่ UI ฝั่งหน้าบ้านไม่เพียงพอต่อการถูกยิง API ซ้ำ"}, {"id": 10, "skill": "Web & Mobile Development (including Backend)", "category": "Software Engineering & Development", "type": "multi", "question": "เพื่อป้องกันช่องโหว่ Cross-Site Scripting (XSS) ในเว็บแอปพลิเคชันอย่างครอบคลุม ทั้งระดับโค้ดและระดับโครงสร้างพื้นฐาน ควรเลือกใช้แนวปฏิบัติใดร่วมกัน? [เลือก 2 ข้อที่ถูกต้อง]", "options": ["ใช้ Context-aware Output Encoding / Escaping ก่อนนำข้อมูลจากผู้ใช้ไปแสดงผลบน HTML", "ใช้คำสั่ง `eval()` ในการ parse ข้อมูล string จากผู้ใช้", "ตั้งค่า HTTP Header: `Content-Security-Policy (CSP)` เพื่อจำกัดโดเมนที่สามารถโหลดสคริปต์มารันได้", "อนุญาตให้ผู้ใช้ใส่แท็ก `<script>` ได้อย่างอิสระเพื่อให้ผู้ใช้ปรับแต่งหน้าจอได้"], "correct": [0, 2], "explanation": "การป้องกัน XSS ต้องทำ Defense-in-depth: ระดับโค้ดต้องทำ Output Encoding และระดับเบราว์เซอร์ต้องตั้งค่า Content-Security-Policy (CSP) เพื่อบล็อก inline scripts และ unauthorized scripts"}, {"id": 11, "skill": "OOP", "category": "Software Engineering & Development", "type": "single", "question": "ระบบมี Class ชื่อ `PaymentProcessor` ที่มีฟังก์ชัน `process()` ภายในมี `switch-case` เช็คประเภทบัตรเครดิต, พร้อมเพย์, และกระเป๋าเงินดิจิทัล ซึ่งหากมีช่องทางชำระเงินใหม่ ต้องกลับมาแก้ Class นี้เสมอ การกระทำนี้ละเมิดหลักการ SOLID ข้อใด และควรแก้ด้วย Pattern ใด?", "options": ["ละเมิด Single Responsibility Principle -> แก้ด้วย Singleton Pattern", "ละเมิด Open-Closed Principle (OCP) -> แก้ด้วย Strategy Pattern หรือ Polymorphism", "ละเมิด Liskov Substitution Principle -> แก้ด้วย Adapter Pattern", "ละเมิด Interface Segregation Principle -> แก้ด้วย Facade Pattern"], "correct": [1], "explanation": "การกลับมาแก้ไขโค้ดเดิมเมื่อมีเงื่อนไขใหม่ ละเมิด Open-Closed Principle (เปิดให้ขยาย แต่ปิดไม่ให้แก้ไข) วิธีแก้คือใช้ Strategy Pattern โดยสร้าง Interface `PaymentStrategy` แล้วให้แต่ละวิธีชำระเงิน Implement แยก Class กัน"}, {"id": 12, "skill": "OOP", "category": "Software Engineering & Development", "type": "multi", "question": "หลักการ SOLID ข้อ L (Liskov Substitution Principle - LSP) มีแนวคิดและข้อกำหนดอย่างไร? [เลือก 2 ข้อที่ถูกต้อง]", "options": ["Subclass (คลาสลูก) ต้องสามารถใช้งานแทน Superclass (คลาสแม่) ได้อย่างสมบูรณ์โดยที่ระบบไม่ทำงานผิดเพี้ยน", "Subclass สามารถโยน Exception แบบใหม่ที่คลาสแม่ไม่เคยประกาศไว้ได้อย่างอิสระ", "Subclass ต้องไม่ลดทอนเงื่อนไขข้อบังคับ (Preconditions) หรือเปลี่ยนแปลงสัญญาสากลของคลาสแม่", "ทุก Class ต้องสืบทอด (Inherit) มาจากคลาสแม่เพียงตัวเดียวเท่านั้น"], "correct": [0, 2], "explanation": "LSP กำหนดว่าวัตถุของคลาสลูกต้องสามารถแทนที่คลาสแม่ได้โดยไม่ทำให้พฤติกรรมของโปรแกรมพัง และต้องรักษา Contract เดิม (ไม่เพิ่มเงื่อนไขเข้มงวดขึ้นใน input และไม่ลดเงื่อนไขใน output)"}, {"id": 13, "skill": "Unit & Functional testing", "category": "Software Engineering & Development", "type": "single", "question": "ในการเขียน Unit Test สำหรับฟังก์ชันคำนวณเบี้ยประกัน (Insurance Calculation) เหตุใดจึงควรหลีกเลี่ยงการเชื่อมต่อฐานข้อมูลจริงหรือเรียก External API จริงระหว่างรันเทส?", "options": ["เพราะการต่อของจริงทำให้ได้คะแนน Code Coverage น้อยลง", "เพื่อแยกทดสอบเฉพาะ Business Logic ให้เป็นอิสระ (Isolation), ทำให้เทสรันได้เร็วมาก และไม่เกิด Flaky Test จากเน็ตเวิร์กภายนอก", "เพราะ Jest และ JUnit ไม่อนุญาตให้เชื่อมต่อ Database", "เพราะฐานข้อมูลจะถูกลบข้อมูลทิ้งอัตโนมัติเมื่อรันเทส"], "correct": [1], "explanation": "หัวใจของ Unit Test คือ Isolation และ Speed การ Mock dependencies ภายนอกจะทำให้การทดสอบรันเร็วเป็นมิลลิวินาที และตัดปัจจัยความผันผวนของระบบเครือข่ายภายนอกออกไปอย่างสิ้นเชิง"}, {"id": 14, "skill": "Unit & Functional testing", "category": "Software Engineering & Development", "type": "multi", "question": "ลักษณะของชุดการทดสอบ Unit Test ที่มีคุณภาพสูงและเชื่อถือได้ตามมาตรฐานวิศวกรรมซอฟต์แวร์ ควรมีคุณสมบัติตามข้อใด? [เลือก 2 ข้อที่ถูกต้อง]", "options": ["มีความเป็น Deterministic คือรันกี่ครั้ง ในสภาพแวดล้อมใด ผลลัพธ์ต้องออกมาเหมือนเดิมเสมอ 100%", "ครอบคลุมเฉพาะ Happy Path เท่านั้น เพื่อให้เทสผ่านง่ายบน CI/CD", "มี Branch Coverage และ Edge Cases สูง ครอบคลุมทั้งกรณีข้อมูลผิดพลาดและ Boundary conditions", "ต้องรันแบบเรียงลำดับตามตัวอักษรของชื่อฟังก์ชันเท่านั้น ห้ามรันแบบสุ่ม"], "correct": [0, 2], "explanation": "Test ที่ดีต้องไม่ Flaky (Deterministic รันกี่ครั้งต้องให้ผลเดิม) และต้องทดสอบครอบคลุมทั้ง Happy Path, Unhappy Path, และ Edge Cases (Branch coverage สูง)"}, {"id": 15, "skill": "Container", "category": "Infrastructure & DevOps", "type": "single", "question": "ในการเขียน Dockerfile สำหรับแอปพลิเคชัน Node.js หรือ Go การประยุกต์ใช้เทคนิค 'Multi-stage Build' มีประโยชน์หลักข้อใดมากที่สุด?", "options": ["ช่วยให้แอปพลิเคชันรันได้โดยไม่ต้องใช้ CPU", "แยก Stage ของการ Compile/Build ออกจาก Production Runtime ทำให้ Image ขั้นสุดท้ายมีขนาดเล็กมาก และไม่มี Toolchain ที่อาจเป็นช่องโหว่ความปลอดภัย", "ทำให้สามารถรัน Database หลายๆ ตัวใน Container เดียวกันได้", "ข้ามขั้นตอนการทำ Unit Test บนเครื่อง Build"], "correct": [1], "explanation": "Multi-stage build ช่วยแยกเครื่องมือในการ build (เช่น SDK, GCC, npm devDependencies) ทิ้งไป และคัดลอกเฉพาะ Artifact หรือ Binary ที่ได้ไปยัง Base image ตัวเล็กๆ (เช่น Alpine หรือ Distroless) ส่งผลให้ Image เบา ปลอดภัย และ deploy รวดเร็ว"}, {"id": 16, "skill": "CI/CD", "category": "Infrastructure & DevOps", "type": "single", "question": "ใน Automated CI/CD Pipeline ขั้นตอนใดควรถูกกำหนดให้เป็น 'Quality Gate' และสั่งหยุด Pipeline ทันที (Fail Fast) หากพบว่าไม่ผ่านเกณฑ์?", "options": ["ขั้นตอน Deploy to Production", "ขั้นตอนแจ้งเตือนผ่าน Slack", "ขั้นตอน Automated Unit Tests และ Static Code Analysis (เช่น SonarQube Quality Gate)", "ขั้นตอนสำรองข้อมูลประจำสัปดาห์"], "correct": [2], "explanation": "หลักการ Fail Fast ใน CI/CD คือการตรวจจับปัญหาให้เร็วที่สุด การให้ Unit Test และ SonarQube ทำหน้าที่เป็น Quality Gate ตั้งแต่ขั้นตอนแรกๆ จะป้องกันไม่ให้โค้ดที่มี Bug หรือช่องโหว่ถูก Build และ Deploy ไปยัง Environment ถัดไป"}, {"id": 17, "skill": "Cloud", "category": "Infrastructure & DevOps", "type": "single", "question": "ในการตั้งค่าการเข้าถึงทรัพยากรบน Cloud (AWS, Azure, GCP) หลักปฏิบัติใดสอดคล้องกับหลักความปลอดภัย 'Principle of Least Privilege' มากที่สุด?", "options": ["แจกสิทธิ์ Admin (Full Access) ให้กับ Developer ทุกคนเพื่อความคล่องตัวในการทำงาน", "ฮาร์ดโค้ด AWS Access Key และ Secret Key ไว้ใน Source code เพื่อให้แอปพลิเคชันเชื่อมต่อได้ง่าย", "กำหนดสิทธิ์เฉพาะ Actions และ Resources ที่แอปพลิเคชันจำเป็นต้องใช้จริงเท่านั้น และใช้ IAM Roles/Managed Identities แทนการใช้ Static Keys", "ปิดการทำ Multi-Factor Authentication (MFA) เพื่อให้ล็อกอินได้สะดวกรวดเร็ว"], "correct": [2], "explanation": "Least Privilege คือการให้สิทธิ์เท่าที่จำเป็นต้องใช้เท่านั้น และการใช้ IAM Roles หรือ Service Accounts ช่วยหลีกเลี่ยงการรั่วไหลของ Long-lived credentials"}, {"id": 18, "skill": "Application Security", "category": "Security", "type": "single", "question": "ในระบบมี API `GET /api/documents/:documentId` ผู้ใช้งานนาย A ซึ่งล็อกอินถูกต้อง สามารถแก้ไข URL จาก ID ของตนเองเป็น ID ของนาย B แล้วมองเห็นเอกสารลับของนาย B ได้ทันที ช่องโหว่นี้คืออะไรตาม OWASP Top 10?", "options": ["SQL Injection (SQLi)", "Insecure Direct Object References (IDOR) / Broken Object Level Authorization", "Cross-Site Request Forgery (CSRF)", "Security Misconfiguration"], "correct": [1], "explanation": "IDOR (หรือ Broken Object Level Authorization - BOLA ใน API Security) เกิดจากการที่เซิร์ฟเวอร์ไม่ได้ตรวจสอบสิทธิ์ว่าผู้ใช้ที่ร้องขอเข้ามา มีสิทธิ์เป็นเจ้าของ Object นั้นจริงหรือไม่"}, {"id": 19, "skill": "AI & Prompt engineer", "category": "future skill", "type": "single", "question": "งานวิจัยพบปรากฏการณ์ 'Lost in the Middle' ใน Large Language Models (LLMs) ซึ่งโมเดลจะโฟกัสข้อมูลที่อยู่ตรงกลาง Context Window ได้น้อยกว่าข้อมูลส่วนหัวและส่วนท้าย ในการเขียน Prompt ที่มี Context ขนาดยาว ควรแก้ปัญหานี้อย่างไร?", "options": ["วางคำสั่งสำคัญและข้อห้าม (Constraints) ไว้ตรงกลางข้อความ", "วาง Role และ Instruction หลักไว้ด้านบน และสรุปย้ำเงื่อนไข/รูปแบบ Output (Guardrails) ไว้ด้านล่างสุดของ Prompt", "พิมพ์คำสั่งซ้ำๆ กัน 100 รอบตรงกลางเอกสาร", "ไม่จำเป็นต้องทำอะไร เพราะโมเดลให้ความสนใจทุกคำเท่ากัน 100%"], "correct": [1], "explanation": "เพื่อแก้ Lost in the Middle ควรวาง System Instruction และ Context สำคัญไว้ที่จุดเริ่มต้น และวาง Tasks, Constraints, และ Output Specifications ไว้ที่จุดสิ้นสุดก่อนปิด Prompt เพื่อให้อยู่ในตำแหน่ง Attention สูงสุดของโมเดล"}, {"id": 20, "skill": "AI & Prompt engineer", "category": "future skill", "type": "multi", "question": "ในการทำ 'Context Optimization' เพื่อเขียน Prompt ให้ AI ช่วย Refactor โค้ดใน Production แนวปฏิบัติใดที่ช่วยลด Hallucination และได้คำตอบที่นำไปใช้ได้จริงมากที่สุด? [เลือก 2 ข้อที่ถูกต้อง]", "options": ["คัดเลือกเฉพาะ Function Signature, Business Rules, และตัดส่วนที่ไม่เกี่ยวข้อง (Boilerplate) ทิ้งไป", "ก๊อปปี้ไฟล์โค้ดทั้งโปรเจกต์ 5,000 บรรทัดใส่ลงไปใน Prompt โดยไม่ต้องคัดกรอง", "ใช้ XML Tags หรือ Markdown Delimiters เพื่อแบ่งแยกสัดส่วนบริบท, โค้ดต้นฉบับ, และข้อจำกัดอย่างชัดเจน", "เขียนคำสั่งสั้นๆ เพียงประโยคเดียวว่า 'ช่วยแก้โค้ดนี้ให้ดีขึ้นหน่อย'"], "correct": [0, 2], "explanation": "Context Optimization คือการเพิ่ม Signal-to-Noise Ratio (SNR) โดยคัดเฉพาะสิ่งที่จำเป็น และใช้ Delimiters (เช่น XML Tags) เพื่อจัดโครงสร้างไม่ให้ AI สับสนระหว่างคำสั่งกับข้อมูล"}];
+    const CODING_DATA = [{"id": 1, "title": "Refactor Discount Logic (Clean Code & SRP)", "category": "Coding & Problem Solving", "difficulty": "Intermediate", "description": "จงเขียนฟังก์ชันคำนวณส่วนลด `calculateDiscount(cartTotal, tier)` จากกฎทางธุรกิจ:\n1. ลูกค้า 'BRONZE' ไม่ได้รับส่วนลด (0%)\n2. ลูกค้า 'SILVER' ได้รับส่วนลด 5% หากยอดซื้อตั้งแต่ 500 บาทขึ้นไป (ถ้าน้อยกว่าได้ 0%)\n3. ลูกค้า 'GOLD' ได้รับส่วนลด 10% หากยอดซื้อตั้งแต่ 1000 บาทขึ้นไป (ถ้าน้อยกว่าได้ 5%)\n4. ส่วนลดสูงสุดต้องไม่เกิน 500 บาท (Cap at 500)\n5. คืนค่าเป็นตัวเลขจำนวนเต็ม (ปัดเศษด้วย Math.round) และหากยอดซื้อ <= 0 ให้คืนค่า 0", "starterCode": "function calculateDiscount(cartTotal, tier) {\n  // Write your code here\n  \n}", "solutionCode": "function calculateDiscount(cartTotal, tier) {\n  if (!cartTotal || cartTotal <= 0) {\n    return 0;\n  }\n  \n  let discountRate = 0;\n  if (tier === 'SILVER') {\n    discountRate = cartTotal >= 500 ? 0.05 : 0;\n  } else if (tier === 'GOLD') {\n    discountRate = cartTotal >= 1000 ? 0.10 : 0.05;\n  }\n  \n  const discount = Math.round(cartTotal * discountRate);\n  return Math.min(discount, 500);\n}", "explanation": "แนวคิด Clean Code & SRP:\n1. Guard Clause เช็คยอด <= 0 และ return 0 ทันที ตัดเงื่อนไขซับซ้อนทิ้ง\n2. กำหนด discountRate ตามเงื่อนไขสมาชิกอย่างกระชับ\n3. ใช้ Math.min(..., 500) ในการจำกัดส่วนลดสูงสุดแทน if-else\n4. ปัดเศษทศนิยมด้วย Math.round() ตาม Requirement", "testCases": [{"input": [0, "GOLD"], "expected": 0, "desc": "ยอดซื้อ 0 บาท ทุกระดับสมาชิกต้องได้ส่วนลด 0"}, {"input": [400, "SILVER"], "expected": 0, "desc": "SILVER ยอดซื้อ 400 (< 500) ได้ส่วนลด 0"}, {"input": [800, "SILVER"], "expected": 40, "desc": "SILVER ยอดซื้อ 800 (5%) ได้ส่วนลด 40"}, {"input": [800, "GOLD"], "expected": 40, "desc": "GOLD ยอดซื้อ 800 (< 1000 ได้ 5%) ได้ส่วนลด 40"}, {"input": [2000, "GOLD"], "expected": 200, "desc": "GOLD ยอดซื้อ 2000 (10%) ได้ส่วนลด 200"}, {"input": [8000, "GOLD"], "expected": 500, "desc": "GOLD ยอดซื้อ 8000 คำนวณได้ 800 แต่ติด Max Cap ที่ 500"}]}, {"id": 2, "title": "Two-Sum Optimization O(n) Time Complexity", "category": "Coding & Problem Solving", "difficulty": "Intermediate", "description": "จงเขียนฟังก์ชัน `findPairWithSum(nums, target)` ที่รับ Array ของตัวเลข `nums` และผลรวมเป้าหมาย `target` แล้วคืนค่า Array ของ Index 2 ตัวที่บวกกันได้ `target` เช่น `[i, j]`\n- ต้องทำงานด้วย Time Complexity ไม่เกิน O(n) โดยใช้ Map หรือ Object ในการจำค่า (ห้ามใช้ Nested Loop ซ้อนกัน O(n^2))\n- หากไม่พบคู่ที่บวกกันได้ ให้คืนค่า `null`\n- สมาชิกแต่ละตำแหน่งใช้ได้เพียงครั้งเดียว", "starterCode": "function findPairWithSum(nums, target) {\n  // Write your code here (Target: O(n) Time Complexity)\n  \n}", "solutionCode": "function findPairWithSum(nums, target) {\n  const seen = new Map();\n  for (let i = 0; i < nums.length; i++) {\n    const complement = target - nums[i];\n    if (seen.has(complement)) {\n      return [seen.get(complement), i];\n    }\n    seen.set(nums[i], i);\n  }\n  return null;\n}", "explanation": "แนวคิด Two-Sum Optimization:\n- ถ้าใช้ Loop 2 ชั้นซ้อนกัน จะได้ O(n^2) ซึ่งช้ามากกับข้อมูลขนาดใหญ่\n- การใช้ Hash Map (หรือ JavaScript Map) จำ complement = target - currentNumber จะช่วยให้ค้นหาตัวที่บวกกันได้ในเวลา O(1)\n- ส่งผลให้ Time Complexity รวมลดเหลือเพียง O(n) และ Space Complexity เป็น O(n)", "testCases": [{"input": [[2, 7, 11, 15], 9], "expected": [0, 1], "desc": "คู่ 2 + 7 = 9 คืนค่า [0, 1]"}, {"input": [[3, 2, 4], 6], "expected": [1, 2], "desc": "คู่ 2 + 4 = 6 คืนค่า [1, 2]"}, {"input": [[3, 3], 6], "expected": [0, 1], "desc": "คู่ 3 + 3 = 6 คืนค่า [0, 1]"}, {"input": [[1, 2, 3], 10], "expected": null, "desc": "ไม่พบคู่ที่บวกกันได้ 10 คืนค่า null"}]}, {"id": 3, "title": "Deep Merge Configs (Data Structures)", "category": "Web & Backend Development", "difficulty": "Intermediate", "description": "เขียนฟังก์ชัน `deepMerge(target, source)` เพื่อรวม Object 2 ตัวเข้าด้วยกันแบบ Recursive (Deep Merge) โดยมีข้อกำหนด:\n1. ค่า Key ที่เป็น Object ซ้อนอยู่ข้างใน ต้องถูก Merge รวมกัน ไม่ใช่เอา Object ก้อนใหม่ไปเขียนทับทั้งหมด\n2. ค่า Primitive (string, number, boolean) ใน `source` ให้เขียนทับ `target`\n3. ต้องไม่กระทบ (Mutate) Object `target` ต้นฉบับ (ต้องสร้าง Object ใหม่ส่งกลับเสมอ)", "starterCode": "function deepMerge(target, source) {\n  // Write your code here (Handle nested objects immutably)\n  \n}", "solutionCode": "function deepMerge(target, source) {\n  const result = Object.assign({}, target);\n  for (const key in source) {\n    if (Object.prototype.hasOwnProperty.call(source, key)) {\n      if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {\n        result[key] = deepMerge(target[key] || {}, source[key]);\n      } else {\n        result[key] = source[key];\n      }\n    }\n  }\n  return result;\n}", "explanation": "แนวคิด Deep Merge:\n- Object.assign() ปกติจะทำแค่ Shallow Merge (เขียนทับ Object ทั้งก้อน)\n- การทำ Deep Merge ต้องตรวจว่าค่าเป็น Object หรือไม่ ถ้าใช่ให้เรียก deepMerge แบบ Recursive เข้าไปผสานค่าข้างใน\n- ใช้ Object.assign({}, target) เพื่อป้องกันไม่ให้กระทบ (Mutate) target เดิม (Immutability)", "testCases": [{"input": [{"a": 1, "b": 2}, {"b": 3, "c": 4}], "expected": {"a": 1, "b": 3, "c": 4}, "desc": "Merge ชั้นเดียว ค่า b ถูกเขียนทับและเพิ่ม c"}, {"input": [{"db": {"port": 5432, "host": "localhost"}}, {"db": {"host": "remote", "user": "admin"}}], "expected": {"db": {"port": 5432, "host": "remote", "user": "admin"}}, "desc": "Deep merge อ็อบเจกต์ db โดยรักษา port 5432 ไว้"}]}, {"id": 4, "title": "Aggregate Order Metrics", "category": "Coding & Problem Solving", "difficulty": "Intermediate", "description": "เขียนฟังก์ชัน `aggregateMetrics(orders)` รับ Array ของ Orders: `[{ id, category, amount, status }]`\nแล้วสรุปผลข้อมูลเฉพาะ Orders ที่มีสถานะ `'COMPLETED'` เท่านั้น โดยคืนค่าเป็น Object:\n`{ [category]: { count: จำนวนรายการ, totalAmount: ยอดรวม } }`", "starterCode": "function aggregateMetrics(orders) {\n  // Write your code here (Filter completed orders and aggregate)\n  \n}", "solutionCode": "function aggregateMetrics(orders) {\n  return orders.reduce((acc, order) => {\n    if (order.status === 'COMPLETED') {\n      if (!acc[order.category]) {\n        acc[order.category] = { count: 0, totalAmount: 0 };\n      }\n      acc[order.category].count += 1;\n      acc[order.category].totalAmount += order.amount;\n    }\n    return acc;\n  }, {});\n}", "explanation": "แนวคิด Data Aggregation:\n- ใช้ Array.prototype.reduce() เพื่อวนลูปประมวลผลเพียงรอบเดียว O(n)\n- กรองเฉพาะ order.status === 'COMPLETED'\n- ทำการสะสมค่า count และ totalAmount ตาม category เป็น Key ใน Object accumulator", "testCases": [{"input": [[{"id": 1, "category": "Food", "amount": 100, "status": "COMPLETED"}, {"id": 2, "category": "Food", "amount": 50, "status": "CANCELLED"}, {"id": 3, "category": "Food", "amount": 150, "status": "COMPLETED"}, {"id": 4, "category": "Electronics", "amount": 1000, "status": "COMPLETED"}]], "expected": {"Food": {"count": 2, "totalAmount": 250}, "Electronics": {"count": 1, "totalAmount": 1000}}, "desc": "กรองเฉพาะ COMPLETED และจัดกลุ่มตาม category"}]}];
+    const PROMPT_DATA = [{"id": 1, "title": "Scenario 1: SQL Performance Optimization & Indexing", "skill": "SQL & AI Prompt Engineer", "ticket": "INC-8821: Slow Checkout Query on Production", "problemStatement": "ระบบมีตาราง `orders` (10 ล้านแถว) และ `order_items` (40 ล้านแถว) Query ดึงยอดขายสรุปรายวันช้ามาก (ใช้เวลากว่า 45 วินาที) Execution Plan ชี้ว่าเกิด Sequential Scan เต็มตารางบน order_items และ Filter กรอง order_date ไม่ได้ใช้ Index เนื่องจากฟังก์ชัน DATE() ครอบคอลัมน์อยู่", "contextSnippet": "Table: orders (id BIGINT PK, customer_id INT, order_timestamp TIMESTAMP, status VARCHAR(20))\nTable: order_items (id BIGINT PK, order_id BIGINT FK, product_id INT, quantity INT, unit_price NUMERIC)\nCurrent Indexes:\n- orders_pkey ON orders(id)\n- order_items_pkey ON order_items(id)\n\nCurrent Slow Query:\nSELECT o.customer_id, SUM(i.quantity * i.unit_price) as total_spent\nFROM orders o\nJOIN order_items i ON o.id = i.order_id\nWHERE DATE(o.order_timestamp) = '2026-08-28' AND o.status = 'COMPLETED'\nGROUP BY o.customer_id;", "taskRequirements": "จงเขียน Prompt เพื่อสั่ง AI ให้ช่วย Optimize Query และแนะนำ Index ที่คุ้มค่าที่สุด โดย:\n1. ปรับปรุง Query ให้ใช้ประโยชน์จาก Index บน Timestamp ได้ (SARGable Query)\n2. แนะนำ DDL สำหรับสร้าง Composite Index ที่เหมาะสม\n3. ต้องห้ามเปลี่ยนผลลัพธ์ของข้อมูล\n4. ต้องการคำตอบเป็นโครงสร้างระบุชัดเจน (Optimized SQL, Recommended DDL, Rationale)", "goldPrompt": "You are a Principal PostgreSQL Database Administrator.\n\n<context>\nWe have a performance bottleneck on a high-volume database.\nOrders: 10M rows, Order_items: 40M rows.\nDatabase: PostgreSQL 16\nSchema & Query:\n- Table: orders (id BIGINT PK, customer_id INT, order_timestamp TIMESTAMP, status VARCHAR(20))\n- Table: order_items (id BIGINT PK, order_id BIGINT FK, product_id INT, quantity INT, unit_price NUMERIC)\nCurrent Query uses `DATE(o.order_timestamp) = '2026-08-28'` which prevents index usage.\n</context>\n\n<task>\n1. Rewrite the SQL query into a SARGable format using timestamp range comparison.\n2. Provide the exact DDL for the optimal composite index on `orders` and any supporting index on `order_items`.\n3. Explain the query plan improvement in 3 concise bullet points.\n</task>\n\n<constraints>\n- Do NOT alter table schema or column types.\n- Ensure 100% data equivalence with the original query.\n- Output ONLY in the following format:\n  ### 1. Optimized Query\n  ```sql\n  ...\n  ```\n  ### 2. Recommended Index DDL\n  ```sql\n  ...\n  ```\n  ### 3. Execution Rationale\n</constraints>", "rationale": "Prompt นี้ได้คะแนนเต็มเพราะ 1) แยกแท็ก <context>, <task>, <constraints> 2) กำหนด Role ชัดเจน 3) ชี้จุดคอขวด (non-SARGable DATE function) 4) กำหนด Negative Constraints ไม่ให้แก้ schema 5) ตีกรอบ Output Format ตายตัว"}, {"id": 2, "title": "Scenario 2: Unit Test Generation with Isolation & Mocking", "skill": "Unit Testing & AI Prompt Engineer", "ticket": "TECH-4091: 100% Branch Coverage for Payment Service", "problemStatement": "ต้องการสร้าง Unit Test ด้วย Jest/TypeScript สำหรับฟังก์ชัน `processPayment` ซึ่งมีการเรียก External Dependencies (StripeGateway, AuditLogger, Database) โดยต้องได้ Branch Coverage 100% และห้ามต่อบริการภายนอกจริง", "contextSnippet": "export async function processPayment(paymentRequest: PaymentRequest): Promise<PaymentResult> {\n  if (!paymentRequest.amount || paymentRequest.amount <= 0) {\n    throw new InvalidAmountError('Amount must be positive');\n  }\n  const user = await UserRepository.findById(paymentRequest.userId);\n  if (!user || user.status !== 'ACTIVE') {\n    throw new UserNotEligibleError('User is not eligible');\n  }\n  const charge = await StripeClient.charges.create({\n    amount: paymentRequest.amount,\n    currency: 'thb',\n    customer: user.stripeCustomerId\n  });\n  await AuditLogger.logTransaction({ userId: user.id, chargeId: charge.id });\n  return { success: true, transactionId: charge.id };\n}", "taskRequirements": "เขียน Prompt เพื่อสั่ง AI สร้างชุดทดสอบที่:\n1. Mock ทุก External Dependency อย่างสมบูรณ์ (UserRepository, StripeClient, AuditLogger)\n2. ครอบคลุมทุก Branch: amount <= 0, user ไม่พบ, user inactive, charge สำเร็จ, และ stripe โยน exception\n3. ต้องเป็นโค้ด TypeScript Jest ที่พร้อมรันทันที ไม่มีคำเกริ่นนำ", "goldPrompt": "You are a Senior QA Engineer specializing in Jest and TypeScript.\n\n<context>\nTarget function to test: `processPayment` in paymentService.ts.\nDependencies to mock:\n- `UserRepository.findById(id)`\n- `StripeClient.charges.create(params)`\n- `AuditLogger.logTransaction(payload)`\n</context>\n\n<requirements>\nGenerate a comprehensive Jest test suite that covers 100% branch coverage:\n1. Case 1: `paymentRequest.amount <= 0` throws `InvalidAmountError`.\n2. Case 2: `user` not found throws `UserNotEligibleError`.\n3. Case 3: `user.status !== 'ACTIVE'` throws `UserNotEligibleError`.\n4. Case 4: Successful charge -> verify StripeClient params, AuditLogger called once, returns success.\n5. Case 5: Stripe throws APIError -> verify error propagates and AuditLogger is NOT called.\n</requirements>\n\n<constraints>\n- Strict Isolation: Do NOT connect to real database or network. Use `jest.mock()` and `jest.spyOn()`.\n- Reset all mocks before each test (`beforeEach`).\n- Output ONLY the raw executable TypeScript test code inside a single markdown codeblock. No explanations, no markdown intro.\n</constraints>", "rationale": "ครอบคลุมครบทุกมิติ ระบุ dependencies ที่ต้อง mock ชัดเจน แจกแจง 5 test cases ครบทุก branch และบังคับ output เป็นโค้ดล้วนๆ"}, {"id": 3, "title": "Scenario 3: Security Remediation (OWASP IDOR & SQLi)", "skill": "Application Security & AI Prompt Engineer", "ticket": "SEC-102: Critical Vulnerability in Document Viewer API", "problemStatement": "Security Audit ตรวจพบว่า Endpoint `/api/documents/:id` มี 2 ช่องโหว่ร้ายแรง: 1) ใช้ String Concatenation สร้าง SQL query เสี่ยงต่อ SQL Injection 2) ไม่มีการตรวจสอบว่าผู้ใช้ที่ส่ง token มาเป็นเจ้าของ document จริงหรือไม่ (IDOR)", "contextSnippet": "// Express.js route with vulnerabilities\napp.get('/api/documents/:id', authenticateToken, async (req, res) => {\n  const docId = req.params.id;\n  // Vulnerability 1: SQL Injection\n  // Vulnerability 2: IDOR (req.user.id is ignored!)\n  const sql = `SELECT * FROM documents WHERE id = '${docId}'`;\n  const result = await db.query(sql);\n  if (result.rows.length === 0) return res.status(404).send('Not found');\n  res.json(result.rows[0]);\n});", "taskRequirements": "เขียน Prompt สั่ง AI ให้ Refactor โค้ดนี้ให้ปลอดภัยตาม OWASP Top 10 โดย:\n1. ใช้ Parameterized Queries ป้องกัน SQLi\n2. ใส่การตรวจสิทธิ์ความเป็นเจ้าของ (`WHERE id = $1 AND owner_id = $2`) เพื่อแก้ IDOR\n3. ไม่ทำลาย API Contract เดิม", "goldPrompt": "You are an Application Security Specialist adhering strictly to OWASP Top 10 standards.\n\n<objective>\nRefactor the provided vulnerable Express.js endpoint to remediate SQL Injection (A03:2021) and Broken Object Level Authorization / IDOR (A01:2021).\n</objective>\n\n<vulnerable_code>\napp.get('/api/documents/:id', authenticateToken, async (req, res) => {\n  const docId = req.params.id;\n  const sql = `SELECT * FROM documents WHERE id = '${docId}'`;\n  const result = await db.query(sql);\n  if (result.rows.length === 0) return res.status(404).send('Not found');\n  res.json(result.rows[0]);\n});\n</vulnerable_code>\n\n<security_specifications>\n1. Remediation for SQLi: Enforce parameterized query / prepared statement using `$1`, `$2`.\n2. Remediation for IDOR: Ensure the query filters by both document ID AND authenticated user ID (`req.user.id`).\n3. Input Validation: Validate that `req.params.id` is a valid UUID or integer before querying.\n4. Error Handling: Return 404 for non-existent or unauthorized documents to prevent enumeration attacks.\n</security_specifications>\n\n<constraints>\n- Maintain the original route signature `GET /api/documents/:id`.\n- Output ONLY: 1) Secure refactored JavaScript code 2) Brief checklist of vulnerabilities remediated.\n</constraints>", "rationale": "ระบุประเภทช่องโหว่ OWASP ชัดเจน กำหนดมาตรการแก้ไขเฉพาะจุด (Parameterized + user isolation) และดักเรื่อง Security enumeration (คืน 404 แทน 403 เพื่อไม่ให้เดา ID ได้)"}, {"id": 4, "title": "Scenario 4: Microservices Saga Compensation Pattern", "skill": "Microservices & AI Prompt Engineer", "ticket": "ARCH-55: Resilient Distributed Order Saga", "problemStatement": "ระบบต้องการสร้างกระบวนการ Create Order ข้าม 3 บริการ: 1) OrderService (สร้างคำสั่งซื้อ PENDING) 2) PaymentService (ตัดเงิน) 3) InventoryService (ตัดสต็อก) หากขั้นตอนตัดสต็อกล้มเหลว ต้องสั่ง Refund เงินใน PaymentService และเปลี่ยนสถานะ Order เป็น FAILED ทันที", "contextSnippet": "Event-Driven Orchestration with Node.js & RabbitMQ / Kafka\nStep 1: OrderCreatedEvent -> PaymentService\nStep 2: PaymentCompletedEvent -> InventoryService\nFailure Point: InventoryOutOfStockEvent -> Must trigger Compensating Transactions!", "taskRequirements": "เขียน Prompt สั่ง AI ให้ออกแบบ State Machine / Compensation Handler สำหรับ Saga Orchestrator โดยระบุ Flow ความล้มเหลวและการ Rollback อย่างรัดกุม", "goldPrompt": "You are a Principal Distributed Systems Architect specializing in Microservices and Saga Patterns.\n\n<context>\nWe are implementing a Choreography-based Saga for an e-Commerce Checkout pipeline:\nServices involved: OrderService, PaymentService, InventoryService.\nCommunication: Event-Driven via Apache Kafka.\n</context>\n\n<task>\nDesign the event contract and compensating transaction workflow for the scenario where InventoryService emits `InventoryAllocationFailedEvent`.\n</task>\n\n<requirements>\n1. List all events triggered during the compensation flow in chronological order.\n2. Specify the exact payload schema (JSON) for `RefundPaymentCommand` and `OrderFailedEvent`.\n3. Provide idempotency guidelines for the PaymentService when consuming the refund command.\n</requirements>\n\n<constraints>\n- Adhere to eventual consistency and zero-loss principles.\n- Format the response with clean markdown headings and strict JSON schemas. No conversational filler.\n</constraints>", "rationale": "กำหนดบทบาท Architect ระบุเทคโนโลยี (Kafka, Saga) เจาะจง failure state และบังคับโครงสร้าง Event Schema พร้อมกฎ Idempotency"}];
+    
+    const LESSONS_DATA = {"1": {"skill_id": 1, "skill_name": "Microservices Architecture", "title": "คู่มือติวเข้มสถาปัตยกรรม Microservices ฉบับสมบูรณ์ (From Fundamentals to Senior/Lead)", "subtitle": "เจาะลึกทฤษฎี สถาปัตยกรรม Pattern ยอดนิยม ปัญหาจริงบน Production และแนวข้อสอบระดับสากล", "reading_time": "25 นาที", "chapters": [{"id": "ch1", "title": "บทที่ 1: Microservices Fundamentals & Core Trade-offs", "summary": "ปูพื้นฐานความเข้าใจที่ถูกต้อง ทำไมต้องใช้ และเมื่อไหร่ที่ไม่ควรใช้ พร้อมกฎเหล็ก Database-per-Service", "content": "### 1.1 นิยามที่แท้จริงของ Microservices\n\n**Microservices Architecture** คือรูปแบบสถาปัตยกรรมซอฟต์แวร์ที่แบ่งระบบขนาดใหญ่ออกเป็น **ชุดของบริการย่อยๆ (Independently Deployable Services)** โดยแต่ละบริการมีหน้าที่รับผิดชอบฟังก์ชันทางธุรกิจเพียงเรื่องเดียวอย่างชัดเจน (Single Responsibility / High Cohesion) และมีความเป็นอิสระต่อกันสูง (Loosely Coupled)\n\n#### คุณสมบัติหลัก 4 ประการ (Core Characteristics):\n1. **Autonomous & Independently Deployable:** แต่ละเซอร์วิสสามารถ Build, Test และ Deploy ขึ้น Production ได้เองโดยไม่ต้องรอหรือ Deploy ร่วมกับเซอร์วิสอื่น\n2. **Decentralized Data Management (Database-per-Service):** แต่ละเซอร์วิสเป็นเจ้าของฐานข้อมูลของตัวเอง 100% ห้ามมีเซอร์วิสอื่นเข้ามาอ่านหรือเขียนตารางตรงๆ\n3. **Well-defined APIs:** สื่อสารกันผ่าน Contract และ Network Protocols ที่ชัดเจน (REST, gRPC, Event-Driven Messaging)\n4. **Polyglot Architecture:** สามารถเลือกใช้ภาษาคอมพิวเตอร์ (Node.js, Go, Java) หรือชนิดฐานข้อมูล (PostgreSQL, MongoDB, Redis) ที่เหมาะสมที่สุดกับงานของแต่ละเซอร์วิสได้\n\n---\n\n### 1.2 Monolith vs Modular Monolith vs Microservices (Trade-off Analysis)\n\nในการสอบและการทำงานจริง **ไม่มีสถาปัตยกรรมที่ดีที่สุด มีแต่ Trade-offs ที่เหมาะสมที่สุด**:\n\n| มิติการเปรียบเทียบ | Monolithic Architecture | Modular Monolith | Microservices Architecture |\n| :--- | :--- | :--- | :--- |\n| **ความซับซ้อนของโค้ด** | ต่ำในช่วงแรก แต่จะกลายเป็น Spaghetti Code ในระยะยาว | ปานกลาง แยกโมดูลใน Codebase เดียว | แยก Codebase อิสระ แต่ซับซ้อนที่ระดับเครือข่าย (Network) |\n| **การ Deploy** | Deploy ทั้งระบบพร้อมกัน (All-or-Nothing) | Deploy ทั้งระบบพร้อมกัน | Deploy แยกแต่ละเซอร์วิสได้อิสระอย่างต่อเนื่อง |\n| **การ Scale** | Scale ทั้งแอปพลิเคชัน (เปลืองทรัพยากร) | Scale ทั้งแอปพลิเคชัน | Scale เฉพาะเซอร์วิสที่มีคอขวด (เช่น Payment, Search) |\n| **ความผิดพลาด (Failure)** | Single Point of Failure (จุดเดียวพัง ล่มทั้งระบบ) | จุดเดียวพัง ล่มทั้งระบบ | มี Fault Isolation (เซอร์วิสหนึ่งพัง ระบบอื่นยังทำงานได้) |\n| **ความซับซ้อนของระบบ (Ops)** | ดูแลง่าย CI/CD และ DB ตัวเดียว | ดูแลง่าย | **สูงมาก** ต้องมี Observability, Distributed Tracing, CI/CD ซับซ้อน |\n\n> ⚠️ **คำเตือนในการสอบ (CoE Pitfall):** \n> หากโจทย์ถามว่า *\"ทีมมีขนาดเล็ก 3-4 คน กำลังเริ่มสร้าง MVP ควรเลือกสถาปัตยกรรมใด?\"* \n> คำตอบที่ถูกต้องคือ **Monolith หรือ Modular Monolith** การเลือก Microservices ตั้งแต่วันแรกโดยไม่มีความจำเป็น ถือเป็น Anti-pattern (Over-engineering)\n\n---\n\n### 1.3 กฎเหล็ก: Database-per-Service Pattern\n\nหัวใจที่สำคัญที่สุดของ Microservices คือ **\"การห้ามแชร์ Database (Shared Database is Anti-pattern)\"**\n\n```\n❌ ผิด (Shared Database Anti-Pattern):\n[Order Service] ───┐\n                   ├───> [ Shared PostgreSQL Database (orders, inventory, users) ]\n[Inventory Service]─┘\n(ผลเสีย: Coupling แน่น, Schema เปลี่ยนกระทบทุก Service, ไม่สามารถ Scale แยกกันได้)\n\n✅ ถูกต้อง (Database-per-Service Pattern):\n[Order Service]     ───> [ Orders DB (PostgreSQL) ]\n       │ (Call API / Event)\n       ▼\n[Inventory Service] ───> [ Inventory DB (MongoDB) ]\n```\n\n#### ทำไมต้อง Database-per-Service?\n* **Loose Coupling:** การเปลี่ยน Schema คอลัมน์ของ Order DB จะไม่ทำให้ Inventory Service พัง\n* **Domain Ownership:** ทีม Order ดูแลข้อมูลและ Business Rules ของ Order เท่านั้น\n* **Tech-fit Optimization:** Inventory ต้องการอ่านไว ใช้ In-memory/Document DB ส่วน Order ต้องการ ACID ใช้ Relational DB"}, {"id": "ch2", "title": "บทที่ 2: Inter-Service Communication & API Design", "summary": "การสื่อสารระหว่างเซอร์วิสทั้ง Synchronous, Asynchronous, การออกแบบ API Gateway และ Backend for Frontend (BFF)", "content": "### 2.1 รูปแบบการสื่อสารระหว่างเซอร์วิส (Communication Patterns)\n\nในการเชื่อมต่อระหว่าง Microservices แบ่งออกเป็น 2 รูปแบบหลัก:\n\n```\n1. Synchronous (Request-Response):\n   [Client/Service A] ──(HTTP REST / gRPC)──> [Service B] ──(Wait response)──> OK\n\n2. Asynchronous (Event-Driven / Messaging):\n   [Service A] ──(Publish Event)──> [Message Broker (Kafka/RabbitMQ)]\n                                              │\n                                              ├───> [Service B (Consumer 1)]\n                                              └───> [Service C (Consumer 2)]\n```\n\n#### การเปรียบเทียบ Protocol ยอดนิยม:\n\n| Protocol | ประเภท | จุดเด่น | Use Cases ที่เหมาะสม |\n| :--- | :--- | :--- | :--- |\n| **REST (JSON over HTTP/1.1 or 2)** | Sync | เข้าใจง่าย เป็นมาตรฐานสากล ทุกภาษาเชื่อมต่อง่าย | Public Facing API, Frontend เรียก Backend |\n| **gRPC (Protocol Buffers over HTTP/2)** | Sync | **ประสิทธิภาพสูงมาก (High Throughput, Low Latency)**, Binary Payload ขนาดเล็ก, มี Strict Typing | **Internal Service-to-Service Communication** |\n| **Message Broker (Kafka, RabbitMQ)** | Async | Decoupled 100%, ทนทานต่อการ Spike ของ Traffic, รองรับ Event Sourcing | การสั่งงานข้ามระบบ, Notification, Data Pipeline |\n\n---\n\n### 2.2 API Gateway Pattern & Backend For Frontend (BFF)\n\nเมื่อระบบมีเซอร์วิสย่อยจำนวนมาก เราจะไม่เปิดให้ Client (Web/Mobile) ยิงตรงเข้าหาทุก Microservice แต่จะตั้ง **API Gateway** เป็นด่านหน้า (Single Entry Point)\n\n```\n[ Web Browser ]    ───┐\n                      ├───> [ API Gateway / BFF ] ───┬───> [ User Service ]\n[ Mobile App (iOS) ] ──┘          (Auth, Rate Limit)  ├───> [ Order Service ]\n                                                      └───> [ Payment Service ]\n```\n\n#### หน้าที่สำคัญของ API Gateway (Cross-Cutting Concerns):\n1. **Reverse Proxy & Routing:** นำทาง Request ไปยัง Service ปลายทางที่ถูกต้อง\n2. **Authentication & Authorization:** ตรวจสอบ Token (JWT / OAuth2) ที่จุดเดียว ก่อนส่ง Request เข้าเครือข่ายภายใน\n3. **Rate Limiting & Throttling:** ป้องกันการยิงถล่ม API (DDoS / Abuse)\n4. **SSL/TLS Termination:** ถอดรหัส SSL ที่ Gateway เพื่อลดภาระของ Microservices ภายใน\n5. **API Composition / Aggregation:** รวบรวมข้อมูลจาก 3-4 Services แล้วตอบกลับ Client ใน 1 Request\n\n#### Backend For Frontend (BFF) Pattern:\nแยก API Gateway ตามประเภทของ Client เช่น **Web-BFF** (ส่งข้อมูลครบ ตารางใหญ่) และ **Mobile-BFF** (ส่งเฉพาะข้อมูลกระชับเพื่อประหยัด Data และแบตเตอรี่)"}, {"id": "ch3", "title": "บทที่ 3: Distributed Data Management & Transactions", "summary": "หัวใจข้อสอบระดับ Senior/Lead: Dual-Write Problem, Transactional Outbox Pattern, Saga Pattern, CQRS และ Event Sourcing", "content": "### 3.1 ปัญหา Dual-Write Problem & วิธีแก้ไขด้วย Transactional Outbox\n\nในระบบ Microservices เมื่อต้องการ **\"บันทึกข้อมูลลง Database\"** พร้อมกับ **\"ส่ง Event ขึ้น Message Queue\"** มักเกิดปัญหา **Dual-Write Inconsistency**:\n\n```\n❌ โค้ดที่มีปัญหา (Dual-Write Anti-Pattern):\nasync function createOrder(orderData) {\n  await db.orders.insert(orderData);     // ขั้นตอนที่ 1: สำเร็จ\n  await kafka.publish(\"OrderCreated\");   // ขั้นตอนที่ 2: ถ้า Network ล่มตรงนี้ -> DB บันทึกแล้ว แต่ Event ไม่ถูกส่ง!\n}\n```\n\n#### ✅ วิธีแก้: Transactional Outbox Pattern + Change Data Capture (CDC)\nใช้ Local Database Transaction เดียวกันในการบันทึกข้อมูลลงตาราง `orders` และตาราง `outbox_events` พร้อมกัน จากนั้นใช้ Message Relay (เช่น Debezium / Kafka Connect) คอยอ่าน Outbox แล้วยิงขึ้น Kafka อย่างการันตี 100%\n\n```\n[Order Service]\n   │\n   ├── (Atomic Transaction) ──> [ Orders Table ]\n   └── (Atomic Transaction) ──> [ Outbox Table (event_id, payload, status) ]\n                                      │\n                                      ▼\n                        [ Debezium CDC / Message Relay ]\n                                      │\n                                      ▼\n                             [ Apache Kafka Broker ]\n```\n\n---\n\n### 3.2 Saga Pattern: จัดการธุรกรรมข้ามเซอร์วิส (Distributed Transactions)\n\nเมื่อไม่มี ACID Transaction ข้ามฐานข้อมูล เราใช้ **Saga Pattern** ซึ่งคือลำดับของ Local Transactions ต่อเนื่องกัน หากขั้นตอนใดล้มเหลว จะต้องเรียก **Compensating Transactions (ธุรกรรมชดเชยย้อนกลับ)**\n\n#### รูปแบบของ Saga มี 2 แบบหลัก (มักออกข้อสอบบ่อยมาก):\n\n```\n1. Choreography-based Saga (ไร้ศูนย์กลาง - Event Driven):\n   [Order Service] ──(OrderCreated)──> [Payment Service] ──(PaymentSuccess)──> [Inventory Service]\n   * ข้อดี: เรียบง่าย เหมาะกับระบบที่มี 2-3 เซอร์วิส\n   * ข้อเสีย: หากมีขั้นตอนเยอะจะเกิด Cyclic Dependency และติดตาม Flow ได้ยาก\n\n2. Orchestration-based Saga (มีผู้ควบคุมตรงกลาง - State Machine):\n                      ┌───(1. Process Payment)───> [Payment Service]\n                      │\n   [Saga Orchestrator]├───(2. Reserve Stock) ────> [Inventory Service]\n                      │\n                      └───(3. If Failed -> Trigger Compensating Flow)\n   * ข้อดี: ควบคุม State ได้เบ็ดเสร็จ, จัดการ Workflow ซับซ้อนได้ดีเยี่ยม, ไม่เกิดความสับสน\n   * ข้อเสีย: ตัว Orchestrator อาจกลายเป็น Single Point of Logic\n```\n\n---\n\n### 3.3 CQRS (Command Query Responsibility Segregation) & Event Sourcing\n\n* **Command Side (Write):** ปรับแต่งมาเพื่อรับคำสั่งเขียน/แก้ไขข้อมูลอย่างรวดเร็ว ตรวจสอบ Business Validation เข้มงวด\n* **Query Side (Read):** ปรับแต่งมาเพื่อการค้นหาข้อมูล (Read-Optimized เช่น Elasticsearch หรือ Read Replica) โดยรับข้อมูลผ่าน Event จาก Command Side\n* **Event Sourcing:** แทนที่จะเก็บเฉพาะสถานะปัจจุบัน (Current State) ให้เก็บประวัติ **\"ทุกเหตุการณ์ที่เคยเกิดขึ้น (Log of Events)\"** ทำให้สามารถย้อนเวลา (Audit trail) และ Rebuild State ได้เสมอ"}, {"id": "ch4", "title": "บทที่ 4: Fault Tolerance, Resilience & Stability Patterns", "summary": "เทคนิคป้องกันระบบล่มแบบลูกโซ่: Circuit Breaker, Exponential Backoff with Jitter, Bulkhead และ Fallback Strategies", "content": "### 4.1 Cascading Failure & ปัญหา Partial Timeout\n\nในระบบ Microservices เมื่อ Service C ทำงานช้าหรือล่ม Threads ของ Service B ที่รอคำตอบจะเริ่มสะสมจน Memory เต็ม และส่งผลให้ Service A ล่มตามไปด้วย เหตุการณ์นี้เรียกว่า **Cascading Failure**\n\n---\n\n### 4.2 Circuit Breaker Pattern (สวิตช์ตัดวงจรอัตโนมัติ)\n\nทำงานเหมือนเบรกเกอร์ไฟฟ้าในบ้าน มี 3 สถานะการทำงาน:\n\n```\n           ┌─────────────────── Success (Reset Count) ───────────────────┐\n           │                                                             │\n           ▼                                                             │\n    ┌─────────────┐            Failure Rate > Threshold           ┌────────────┐\n    │   CLOSED    │ ────────────────────────────────────────────> │    OPEN    │\n    │ (ทำงานปกติ) │                                               │ (ตัดวงจร)  │\n    └─────────────┘                                               └────────────┘\n           ▲                                                             │\n           │                      Wait Sleep Window (e.g. 5s)            │\n           │                                                             ▼\n           │     Test Request Success                     ┌──────────────┐\n           └───────────────────────────────────────────── │  HALF-OPEN   │\n                                                          │ (ทดสอบส่งดู) │\n                         Test Request Failed              └──────────────┘\n           (ย้อนกลับไป OPEN ใหม่) ───────────────────────────────┘\n```\n\n1. **CLOSED (สถานะปกติ):** ทุก Request ไหลผ่านตามปกติ หากเกิด Error สะสมถึงเกณฑ์ (Threshold เช่น พัง 50% ใน 10 วินาที) สวิตช์จะตัดเข้าสู่สถานะ **OPEN**\n2. **OPEN (ตัดวงจร):** **ปฏิเสธ Request ทันทีโดยไม่ต้องส่งไปหา Service ปลายทาง (Fail-Fast)** และส่ง Fallback Response กลับไป ช่วยให้ Service ปลายทางมีเวลาฟื้นตัว\n3. **HALF-OPEN (กึ่งเปิดเพื่อทดสอบ):** เมื่อครบเวลาหน่วง (Sleep Window เช่น 5 วินาที) จะปล่อยให้ Request เล็กน้อยลองวิ่งผ่านดู ถ้าสำเร็จจะกลับไป **CLOSED** ถ้ายังพังจะกลับไป **OPEN**\n\n---\n\n### 4.3 Retry with Exponential Backoff & Jitter\n\nการยิงซ้ำ (Retry) ทันทีจะยิ่งทำให้ Service ปลายทางที่กำลังจะล่ม จมน้ำหนักขึ้น:\n* **Exponential Backoff:** หน่วงเวลาเพิ่มขึ้นทวีคูณในแต่ละครั้งที่ Retry (เช่น 100ms -> 200ms -> 400ms -> 800ms)\n* **Jitter (สุ่มค่าเวลาบวกลบเล็กน้อย):** ป้องกันไม่ให้ Client ทุกตัวยิง Retry เข้ามาพร้อมกันเป็นระลอกคลื่น (Thundering Herd Problem)\n\n---\n\n### 4.4 Bulkhead Pattern\n\nแบ่งแยกทรัพยากร (Thread Pool / Connection Pool) ของแต่ละ Service ออกจากกันอย่างเด็ดขาด เพื่อให้เมื่อ Service หนึ่งหมด Thread จะไม่กระทบโควต้าของ Service อื่น"}, {"id": "ch5", "title": "บทที่ 5: Observability, Distributed Tracing & Security", "summary": "การติดตาม Request ข้าม Microservices ด้วย Distributed Tracing (OpenTelemetry), Correlation ID และสถาปัตยกรรมความปลอดภัย Zero-Trust mTLS", "content": "### 5.1 Distributed Tracing & Observability Pillars\n\nการมี Log แยกเครื่องละไฟล์ใน Microservices ทำให้การ Debug เป็นไปไม่ได้ หัวใจของการตรวจสอบสถานะระบบประกอบด้วย **3 เสาหลัก (The 3 Pillars of Observability)**:\n\n```\n                        ┌────────────────────────────────────────┐\n                        │      OBSERVABILITY 3 PILLARS           │\n                        └────────────────────────────────────────┘\n                                    │\n           ┌────────────────────────┼────────────────────────┐\n           ▼                        ▼                        ▼\n     [ 1. METRICS ]           [ 2. LOGS ]              [ 3. TRACES ]\n   (CPU, Latency, RPS)     (Structured JSON)      (End-to-End Request Flow)\n   Tools: Prometheus        Tools: Fluentd, ELK    Tools: OpenTelemetry, Jaeger\n```\n\n#### กลไกของ Distributed Tracing (Trace ID & Span ID):\nเมื่อ Request วิ่งเข้ามาที่ API Gateway ระบบจะสร้าง **Trace ID** ขึ้นมาหนึ่งชุด และส่งต่อไปยังทุก Service ผ่าน HTTP Header (เช่น `traceparent` ตามมาตรฐาน W3C)\n\n```\n[Client] ──(Trace ID: abc-123)──> [API Gateway] (Span 1)\n                                       │\n                         ┌─────────────┴─────────────┐\n                         ▼                           ▼\n                [Order Service] (Span 2)   [User Service] (Span 3)\n                         │\n                         ▼\n               [Payment Service] (Span 4)\n```\nผลลัพธ์ทำให้เราเห็น **Waterfall Graph** ได้ทันทีว่าในเวลา 3 วินาที เสียไปที่ Service ไหนกี่มิลลิวินาที\n\n---\n\n### 5.2 Microservices Security: OAuth2, JWT & Zero-Trust mTLS\n\n#### 1. Edge Authentication & Internal Tokens:\n* **Client to Gateway:** ใช้ OAuth 2.0 / OIDC รับ Access Token\n* **Gateway to Microservices:** Gateway ตรวจสอบความถูกต้อง แล้วแปลงเป็น **Internal User Context (JWT)** ส่งต่อให้ Service ภายใน เพื่อไม่ให้แต่ละ Service ต้องไปยิงตรวจ Token กับ Identity Provider ซ้ำซ้อน\n\n#### 2. Service-to-Service Security (mTLS / Zero-Trust):\n* ภายใน Network หลังบ้าน ไม่อนุญาตให้สื่อสารกันแบบ Plain Text\n* ใช้ **Mutual TLS (mTLS)** โดยที่ทั้ง Service ฝั่งเรียก และ Service ฝั่งรับ ต้องยืนยัน Certificate ของกันและกัน\n* นิยมบริหารจัดการ mTLS ผ่าน **Service Mesh (เช่น Istio, Linkerd)** โดยใช้ Sidecar Proxy คอยเข้ารหัสข้อมูลอัตโนมัติ"}, {"id": "ch6", "title": "บทที่ 6: Real-World Case Studies, HackerRank Mocks & Checkpoint Quiz", "summary": "วิเคราะห์ข้อสอบจริงสไตล์ HackerRank & System Design Interview พร้อม Checkpoint Mini-Quiz ทบทวนความแม่นยำ", "content": "### 6.1 Real-World Case Study: e-Commerce Flash Sale Architecture\n\n**โจทย์:** ระบบขายตั๋วคอนเสิร์ต รองรับคนเข้าซื้อพร้อมกัน 100,000 คนใน 1 นาที โดยที่ที่นั่งต้องไม่ถูกจองซ้ำ และระบบจ่ายเงินต้องไม่ล่ม\n\n#### Solution Architecture:\n1. **Queueing & Rate Limiting:** ที่ API Gateway ใช้ Redis Token Bucket จำกัดคนเข้าสู่ Checkout Service\n2. **Optimistic Locking with Redis:** ล็อคที่นั่งชั่วคราวใน Redis ด้วย TTL 10 นาที (ถ้าไม่จ่ายเงิน ที่นั่งจะหลุดกลับเข้าสต็อกอัตโนมัติ)\n3. **Outbox + Kafka:** Checkout Service ตัดที่นั่งแล้วบันทึก Outbox ส่ง Event ไปยัง Payment Service\n4. **Saga Orchestrator:** ควบคุม Flow การชำระเงิน หากบัตรเครดิตตัดเงินไม่สำเร็จ Orchestrator จะยิง Event สั่งคืนที่นั่งเข้า Redis ทันที\n\n---\n\n### 6.2 สรุป Cheat Sheet สำหรับห้องสอบ (Quick Memory Matrix)\n\n* **ถ้าถามเรื่อง Data Inconsistency ใน Service เดียวกัน:** -> ตอบ **Transactional Outbox Pattern**\n* **ถ้าถามเรื่อง Distributed Transaction ข้าม Service:** -> ตอบ **Saga Pattern (Compensating Transactions)**\n* **ถ้าถามเรื่องป้องกัน Cascading Failure จาก Service ปลายทางล่ม:** -> ตอบ **Circuit Breaker Pattern**\n* **ถ้าถามเรื่องหาจุดคอขวด Latency ข้าม 20 เซอร์วิส:** -> ตอบ **Distributed Tracing (OpenTelemetry)**\n* **ถ้าถามเรื่องความปลอดภัยระหว่าง Service ภายใน:** -> ตอบ **mTLS / Zero-Trust Architecture**"}], "quizzes": [{"id": "ms_q1", "chapter_id": "ch1", "question": "เหตุใดการใช้ Shared Database ระหว่างหลาย Microservices จึงถือเป็น Anti-Pattern ร้ายแรงที่สุด?", "options": ["เพราะทำให้ Database ราคาแพงเกินความจำเป็น", "เพราะสร้าง Tight Coupling ทำให้การแก้ Schema กระทบทุก Service และสูญเสียความสามารถในการ Deploy/Scale อย่างอิสระ", "เพราะ PostgreSQL ไม่รองรับการเชื่อมต่อจากหลาย Service", "เพราะทำให้เขียน Unit Test ไม่ได้"], "correct": 1, "explanation": "Shared Database ทำให้เกิด Tight Coupling ข้ามทีม การเปลี่ยนตารางจะกระทบทุกเซอร์วิส และทำลายหัวใจของ Microservices ที่ต้อง Deploy แยกกันได้อย่างอิสระ"}, {"id": "ms_q2", "chapter_id": "ch3", "question": "เพื่อป้องกันปัญหา 'บันทึก DB สำเร็จแต่ส่ง Message เข้า Kafka ล้มเหลว' (Dual-Write Problem) ควรใช้ Pattern ใด?", "options": ["Two-Phase Commit (2PC)", "Transactional Outbox Pattern ร่วมกับ Change Data Capture (CDC)", "Circuit Breaker Pattern", "ใส่ try-catch ครอบแล้วข้าม error ไป"], "correct": 1, "explanation": "Transactional Outbox Pattern บันทึก Event ลงตาราง Outbox ภายใต้ Local DB Transaction เดียวกันกับข้อมูลหลัก แล้วให้ CDC (เช่น Debezium) อ่านส่งต่อ Kafka อย่างการันตี 100%"}, {"id": "ms_q3", "chapter_id": "ch4", "question": "เมื่อ Circuit Breaker อยู่ในสถานะ 'OPEN' พฤติกรรมของระบบที่ถูกต้องที่สุดคือข้อใด?", "options": ["พยายามส่ง Request ไปหา Service ปลายทางซ้ำๆ ทุก 1 มิลลิวินาที", "ปฏิเสธ Request ทันทีโดยไม่ยิงไปยัง Service ปลายทาง (Fail-Fast) พร้อมส่ง Fallback Response กลับไป", "รีสตาร์ท Server ตัวเองทันที", "ปิดระบบทั้งบริษัทชั่วคราว"], "correct": 1, "explanation": "สถานะ OPEN คือการตัดวงจรเพื่อทำ Fail-Fast ทันที ไม่ส่งโหลดไปซ้ำเติม Service ปลายทางที่กำลังล่ม เพื่อให้ระบบปลายทางมีเวลาฟื้นตัว"}, {"id": "ms_q4", "chapter_id": "ch5", "question": "ในการตรวจสอบว่า HTTP Request ของผู้ใช้เส้นหนึ่งวิ่งผ่าน Service ไหนบ้างและช้าที่จุดใด ต้องใช้สิ่งใดเป็นหลัก?", "options": ["User Password", "Trace ID ที่ถูกส่งต่อไปใน HTTP Headers ตลอดเส้นทางการทำงาน (Distributed Tracing)", "ขนาดไฟล์ของ Database", "IP Address ของผู้ใช้งาน"], "correct": 1, "explanation": "Trace ID คือ Unique ID ที่ถูกสร้างที่ Gateway และส่งต่อผ่าน HTTP Headers ข้ามทุก Hop ทำให้เครื่องมือ Distributed Tracing สามารถรวม Span ทุกอันมาแสดงเป็น Waterfall Timeline ได้"}]}};
+    let currentReaderSkillId = null;
+    let currentChapterIndex = 0;
+    let userQuizAnswers = JSON.parse(localStorage.getItem('c26_reader_quizzes') || '{}');
+    let readerFontSizeLevel = 0;
+
+    // Study Reader Functions
+    function openStudyReader(skillId) {
+      const lesson = LESSONS_DATA[skillId];
+      if (!lesson) {
+        alert('บทเรียนติวเข้มสำหรับทักษะนี้กำลังทยอยอัปเดต (ปัจจุบันเปิดให้เข้าเรียนในหมวด Microservices แล้วครับ)');
+        return;
+      }
+
+      currentReaderSkillId = skillId;
+      currentChapterIndex = 0;
+
+      document.getElementById('reader-modal-skill-name').textContent = lesson.skill_name;
+      document.getElementById('reader-modal-subtitle').textContent = lesson.subtitle;
+      document.getElementById('reader-reading-time').textContent = lesson.reading_time || '20 นาที';
+
+      renderReaderTOC();
+      loadReaderChapter(0);
+
+      document.getElementById('study-reader-modal').classList.remove('hidden');
+      document.body.classList.add('overflow-hidden');
+    }
+
+    function closeStudyReader() {
+      document.getElementById('study-reader-modal').classList.add('hidden');
+      document.body.classList.remove('overflow-hidden');
+    }
+
+    // ESC key closes reader
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const modal = document.getElementById('study-reader-modal');
+        if (modal && !modal.classList.contains('hidden')) {
+          closeStudyReader();
+        }
+      }
+    });
+
+    function renderReaderTOC() {
+      const lesson = LESSONS_DATA[currentReaderSkillId];
+      if (!lesson) return;
+
+      const container = document.getElementById('reader-toc-list');
+      container.innerHTML = lesson.chapters.map((ch, idx) => {
+        const isActive = idx === currentChapterIndex;
+        return `
+          <button onclick="loadReaderChapter(${idx})" class="w-full text-left p-2.5 rounded-xl text-xs transition flex items-start gap-2 ${isActive ? 'bg-brand-500 text-white font-semibold shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'}">
+            <span class="shrink-0 w-5 h-5 rounded-full ${isActive ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'} flex items-center justify-center text-[10px] font-bold">
+              ${idx + 1}
+            </span>
+            <span class="leading-snug flex-1 truncate">${ch.title.split(':')[1] || ch.title}</span>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function loadReaderChapter(idx) {
+      const lesson = LESSONS_DATA[currentReaderSkillId];
+      if (!lesson || !lesson.chapters[idx]) return;
+
+      currentChapterIndex = idx;
+      renderReaderTOC();
+
+      const ch = lesson.chapters[idx];
+      document.getElementById('reader-chapter-pill').textContent = `บทที่ ${idx + 1} จาก ${lesson.chapters.length}`;
+      document.getElementById('reader-chapter-title').textContent = ch.title;
+      document.getElementById('reader-chapter-summary').textContent = ch.summary;
+
+      // Render Markdown content
+      document.getElementById('reader-article-content').innerHTML = renderMarkdownToHtml(ch.content);
+
+      // Scroll to top
+      document.getElementById('reader-content-scroll').scrollTop = 0;
+
+      // Update progress bar
+      const progressPct = Math.round(((idx + 1) / lesson.chapters.length) * 100);
+      document.getElementById('reader-progress-bar').style.width = `${progressPct}%`;
+      document.getElementById('reader-progress-text').textContent = `บทที่ ${idx + 1} จาก ${lesson.chapters.length} (${progressPct}%)`;
+
+      // Update Prev / Next buttons
+      const btnPrev = document.getElementById('btn-reader-prev');
+      const btnNext = document.getElementById('btn-reader-next');
+      btnPrev.disabled = idx === 0;
+      btnPrev.classList.toggle('opacity-50', idx === 0);
+      btnPrev.classList.toggle('cursor-not-allowed', idx === 0);
+
+      if (idx === lesson.chapters.length - 1) {
+        btnNext.textContent = '🎉 จบบทเรียน (ไปทำข้อสอบ)';
+        btnNext.onclick = () => {
+          closeStudyReader();
+          switchTab('mcq');
+        };
+      } else {
+        btnNext.textContent = 'บทย่อยถัดไป →';
+        btnNext.onclick = () => navigateReaderChapter(1);
+      }
+
+      // Checkpoint Quiz Section (Shown at Chapter 6 or chapters with quizzes)
+      const quizSection = document.getElementById('reader-quiz-section');
+      const chapterQuizzes = lesson.quizzes || [];
+      if (idx === lesson.chapters.length - 1 && chapterQuizzes.length > 0) {
+        quizSection.classList.remove('hidden');
+        renderReaderQuiz(chapterQuizzes);
+      } else {
+        quizSection.classList.add('hidden');
+      }
+    }
+
+    function navigateReaderChapter(delta) {
+      const lesson = LESSONS_DATA[currentReaderSkillId];
+      if (!lesson) return;
+      const next = currentChapterIndex + delta;
+      if (next >= 0 && next < lesson.chapters.length) {
+        loadReaderChapter(next);
+      }
+    }
+
+    function changeReaderFontSize(delta) {
+      readerFontSizeLevel = Math.max(-1, Math.min(2, readerFontSizeLevel + delta));
+      const el = document.getElementById('reader-article-content');
+      el.classList.remove('text-xs', 'text-sm', 'text-base', 'text-lg');
+      if (readerFontSizeLevel === -1) el.classList.add('text-xs');
+      else if (readerFontSizeLevel === 0) el.classList.add('text-sm');
+      else if (readerFontSizeLevel === 1) el.classList.add('text-base');
+      else if (readerFontSizeLevel === 2) el.classList.add('text-lg');
+    }
+
+    function renderReaderQuiz(quizzes) {
+      const container = document.getElementById('reader-quiz-section');
+      container.innerHTML = `
+        <div class="bg-gradient-to-tr from-brand-600 to-indigo-600 rounded-2xl p-5 text-white shadow-md">
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-xs px-2 py-0.5 rounded-full bg-white/20 font-semibold">Checkpoint Mini-Quiz</span>
+            <span class="text-xs text-brand-100">ทดสอบความเข้าใจ 4 ข้อ</span>
+          </div>
+          <h3 class="font-bold text-lg">แบบทดสอบวัดความแม่นยำท้ายบทเรียน</h3>
+          <p class="text-xs text-brand-100 mt-1">ตอบถูกครบทุกข้อเพื่อการันตีความพร้อมก่อนลงสนามสอบจริง</p>
+        </div>
+
+        <div class="space-y-4 mt-4">
+          ${quizzes.map((q, qIdx) => {
+            const selectedOpt = userQuizAnswers[q.id];
+            const isAnswered = selectedOpt !== undefined;
+            const isCorrect = isAnswered && selectedOpt === q.correct;
+
+            return `
+              <div class="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40 space-y-3">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-semibold text-brand-600 dark:text-brand-400">คำถามข้อที่ ${qIdx + 1}</span>
+                  ${isAnswered ? (isCorrect ? '<span class="text-xs font-bold text-emerald-600">✓ ถูกต้อง</span>' : '<span class="text-xs font-bold text-rose-600">✕ ไม่ถูกต้อง</span>') : ''}
+                </div>
+                <h4 class="font-semibold text-sm text-slate-900 dark:text-white leading-relaxed">${q.question}</h4>
+
+                <div class="space-y-2">
+                  ${q.options.map((opt, optIdx) => {
+                    const isSelected = selectedOpt === optIdx;
+                    const isCorrectChoice = optIdx === q.correct;
+                    let style = "border-slate-200 dark:border-slate-700/80 hover:bg-slate-100 dark:hover:bg-slate-800";
+
+                    if (isAnswered) {
+                      if (isCorrectChoice) style = "border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-200 font-medium";
+                      else if (isSelected && !isCorrectChoice) style = "border-rose-500 bg-rose-50 dark:bg-rose-950/40 text-rose-900 dark:text-rose-200";
+                    }
+
+                    return `
+                      <div onclick="handleSelectQuizOption('${q.id}', ${optIdx})" class="flex items-start gap-2.5 p-3 rounded-xl border text-xs cursor-pointer transition select-none ${style}">
+                        <input type="radio" name="quiz_${q.id}" value="${optIdx}" ${isSelected ? 'checked' : ''} class="mt-0.5 text-brand-600 pointer-events-none">
+                        <span class="flex-1 leading-relaxed">${opt}</span>
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
+
+                ${isAnswered ? `
+                  <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs leading-relaxed">
+                    <span class="font-bold text-slate-800 dark:text-slate-100">💡 คำอธิบาย:</span> ${q.explanation}
+                  </div>
+                ` : ''}
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+    }
+
+    function handleSelectQuizOption(qId, optIdx) {
+      userQuizAnswers[qId] = optIdx;
+      localStorage.setItem('c26_reader_quizzes', JSON.stringify(userQuizAnswers));
+      const lesson = LESSONS_DATA[currentReaderSkillId];
+      if (lesson && lesson.quizzes) {
+        renderReaderQuiz(lesson.quizzes);
+      }
+    }
+
+    // Markdown Parser
+    function renderMarkdownToHtml(md) {
+      if (!md) return '';
+      let html = md;
+
+      // 1. Code blocks
+      html = html.replace(/```([a-zA-Z0-9_-]*)\n([\s\S]*?)```/g, (match, lang, code) => {
+        return `<div class="my-4 rounded-2xl bg-slate-950 border border-slate-800 overflow-hidden shadow-md">
+          <div class="px-4 py-1.5 bg-slate-900 border-b border-slate-800 flex items-center justify-between text-[11px] text-slate-400 font-mono">
+            <span>${lang || 'code'}</span>
+            <span>diagram/snippet</span>
+          </div>
+          <pre class="p-4 text-emerald-400 text-xs sm:text-sm font-mono overflow-x-auto custom-scrollbar"><code>${escapeHtml(code.trim())}</code></pre>
+        </div>`;
+      });
+
+      // 2. Tables
+      html = html.replace(/(\|[^\n]+\|\n\|[-:| ]+\|\n(?:\|[^\n]+\|\n?)+)/g, (match) => {
+        const lines = match.trim().split('\n');
+        const headers = lines[0].split('|').map(c => c.trim()).filter((c, i, a) => i > 0 && i < a.length - 1);
+        const rows = lines.slice(2).map(line => 
+          line.split('|').map(c => c.trim()).filter((c, i, a) => i > 0 && i < a.length - 1)
+        );
+
+        return `<div class="my-5 overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+          <table class="w-full text-left text-xs sm:text-sm">
+            <thead class="bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 font-semibold border-b border-slate-200 dark:border-slate-700">
+              <tr>${headers.map(h => `<th class="px-4 py-3">${h}</th>`).join('')}</tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-600 dark:text-slate-300">
+              ${rows.map(r => `<tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/40">${r.map(c => `<td class="px-4 py-3">${c}</td>`).join('')}</tr>`).join('')}
+            </tbody>
+          </table>
+        </div>`;
+      });
+
+      // 3. Blockquotes / Alerts
+      html = html.replace(/^>\s*(.+)$/gm, (match, content) => {
+        return `<div class="my-4 p-4 rounded-2xl bg-amber-500/10 border-l-4 border-amber-500 text-amber-900 dark:text-amber-200 text-xs sm:text-sm leading-relaxed">${content}</div>`;
+      });
+
+      // 4. Headers
+      html = html.replace(/^###\s+(.+)$/gm, '<h3 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mt-6 mb-2">$1</h3>');
+      html = html.replace(/^####\s+(.+)$/gm, '<h4 class="text-base font-semibold text-slate-800 dark:text-slate-100 mt-4 mb-1.5">$1</h4>');
+
+      // 5. Unordered lists (* or -)
+      html = html.replace(/^\s*[-*]\s+(.+)$/gm, '<div class="flex items-start gap-2 text-xs sm:text-sm my-1"><span class="text-brand-500 shrink-0 font-bold">•</span><span>$1</span></div>');
+
+      // 6. Numbered lists (1. )
+      html = html.replace(/^\s*(\d+)\.\s+(.+)$/gm, '<div class="flex items-start gap-2 text-xs sm:text-sm my-1"><span class="font-bold text-brand-600 dark:text-brand-400 shrink-0">$1.</span><span>$2</span></div>');
+
+      // 7. Bold
+      html = html.replace(/\*\*([^*]+)\*\*/g, '<strong class="font-bold text-slate-900 dark:text-white">$1</strong>');
+
+      // 8. Inline code (`code`)
+      html = html.replace(/`([^`]+)`/g, '<code class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-brand-600 dark:text-brand-400 font-mono text-[11px] sm:text-xs">$1</code>');
+
+      // 9. Paragraph linebreaks
+      html = html.replace(/\n\n/g, '<div class="h-3"></div>');
+
+      return html;
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+
+    // State
+    let currentTab = 'notes';
+    let currentQIndex = 0;
+    let userMcqAnswers = JSON.parse(localStorage.getItem('c26_mcq_answers') || '{}');
+    let examSubmitted = localStorage.getItem('c26_exam_submitted') === 'true';
+    let isPracticeMode = localStorage.getItem('c26_practice_mode') !== 'false';
+    let timerSeconds = 45 * 60;
+    let timerInterval = null;
+
+    let activeCodingIndex = 0;
+    let userCodingCodes = JSON.parse(localStorage.getItem('c26_coding_codes_v2') || '{}');
+    let codingPassState = JSON.parse(localStorage.getItem('c26_coding_pass') || '{}');
+
+    let activePromptIndex = 0;
+    let userPrompts = JSON.parse(localStorage.getItem('c26_user_prompts') || '{}');
+    let promptScores = JSON.parse(localStorage.getItem('c26_prompt_scores') || '{}');
+
+    // Init App
+    document.addEventListener('DOMContentLoaded', () => {
+      initTheme();
+      renderSkills(SKILLS_DATA);
+      renderMcqNav();
+      renderCurrentQuestion();
+      renderCodingProblemList();
+      loadCodingProblem(0);
+      selectPromptScenario(0);
+      updateDashboard();
+      startTimer();
+
+      // Prompt textarea listener
+      const promptInput = document.getElementById('prompt-input');
+      promptInput.addEventListener('input', () => {
+        userPrompts[activePromptIndex] = promptInput.value;
+        localStorage.setItem('c26_user_prompts', JSON.stringify(userPrompts));
+        updatePromptCounters();
+      });
+    });
+
+    // Tab Switching
+    function switchTab(tabId) {
+      currentTab = tabId;
+      document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
+      document.getElementById('tab-' + tabId).classList.remove('hidden');
+
+      // Update Nav active classes
+      document.querySelectorAll('.nav-tab').forEach(el => {
+        el.className = 'nav-tab px-3.5 py-1.5 rounded-lg transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white';
+      });
+      const activeBtn = document.getElementById('nav-' + tabId);
+      if (activeBtn) {
+        activeBtn.className = 'nav-tab px-3.5 py-1.5 rounded-lg transition-all text-brand-600 dark:text-brand-400 bg-white dark:bg-slate-700 shadow-sm font-semibold';
+      }
+
+      if (tabId === 'dashboard') {
+        updateDashboard();
+      }
+    }
+
+    // Theme Management
+    function initTheme() {
+      const savedTheme = localStorage.getItem('c26_theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      if (savedTheme === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.getElementById('theme-icon-dark').classList.remove('hidden');
+        document.getElementById('theme-icon-light').classList.add('hidden');
+      } else {
+        document.documentElement.classList.remove('dark');
+        document.getElementById('theme-icon-dark').classList.add('hidden');
+        document.getElementById('theme-icon-light').classList.remove('hidden');
+      }
+    }
+
+    function toggleDarkMode() {
+      const isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('c26_theme', isDark ? 'dark' : 'light');
+      document.getElementById('theme-icon-dark').classList.toggle('hidden', !isDark);
+      document.getElementById('theme-icon-light').classList.toggle('hidden', isDark);
+    }
+
+    // -------------------------------------------------------------
+    // STUDY NOTES LOGIC
+    // -------------------------------------------------------------
+    function renderSkills(list) {
+      const container = document.getElementById('skills-container');
+      container.innerHTML = list.map(skill => `
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-2">
+              <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">#${skill.id} ${skill.category}</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-md font-semibold bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-300">Sr: ${skill.matching.senior}</span>
+            </div>
+            <h3 class="font-bold text-base text-slate-900 dark:text-white mb-1">${skill.name}</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed mb-4">${skill.definition}</p>
+
+            <div class="space-y-2 mb-4">
+              <div class="text-[11px] font-semibold text-slate-700 dark:text-slate-300">🎯 Key Requirements:</div>
+              <ul class="text-xs space-y-1 text-slate-600 dark:text-slate-300 list-disc list-inside">
+                ${skill.intermediate.slice(0, 3).map(it => `<li>${it}</li>`).join('')}
+              </ul>
+            </div>
+          </div>
+
+          <div class="pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2">
+            <div class="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-900 dark:text-amber-200">
+              <span class="font-bold">💡 CoE Exam Focus:</span> ${skill.exam_tip}
+            </div>
+            <button onclick="openStudyReader(${skill.id})" class="w-full py-2 px-3 rounded-xl bg-brand-50 hover:bg-brand-100 dark:bg-brand-950/60 dark:hover:bg-brand-900/60 text-brand-700 dark:text-brand-300 font-semibold text-xs transition flex items-center justify-center gap-1.5 border border-brand-200/60 dark:border-brand-800/40 shadow-sm">
+              📖 อ่านหนังสือติวเข้ม & Checkpoint Quiz →
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function filterNotes(cat) {
+      document.querySelectorAll('.note-filter-btn').forEach(btn => {
+        btn.classList.toggle('bg-brand-500', btn.dataset.cat === cat);
+        btn.classList.toggle('text-white', btn.dataset.cat === cat);
+      });
+      if (cat === 'all') {
+        renderSkills(SKILLS_DATA);
+      } else {
+        renderSkills(SKILLS_DATA.filter(s => s.category === cat));
+      }
+    }
+
+    function searchNotes() {
+      const q = document.getElementById('note-search').value.toLowerCase();
+      const filtered = SKILLS_DATA.filter(s =>
+        s.name.toLowerCase().includes(q) ||
+        s.definition.toLowerCase().includes(q) ||
+        s.exam_tip.toLowerCase().includes(q)
+      );
+      renderSkills(filtered);
+    }
+
+    // -------------------------------------------------------------
+    // MULTIPLE CHOICE EXAM LOGIC
+    // -------------------------------------------------------------
+    function renderMcqNav() {
+      const grid = document.getElementById('q-nav-grid');
+      grid.innerHTML = MCQ_DATA.map((q, idx) => {
+        const isAnswered = userMcqAnswers[q.id] && userMcqAnswers[q.id].length > 0;
+        const isCurrent = idx === currentQIndex;
+        let baseClass = "h-9 rounded-lg text-xs font-semibold flex items-center justify-center transition ";
+        if (isCurrent) {
+          baseClass += "ring-2 ring-brand-500 bg-brand-50 text-brand-700 dark:bg-brand-950 dark:text-brand-300 ";
+        } else if (isAnswered) {
+          baseClass += "bg-emerald-500 text-white ";
+        } else {
+          baseClass += "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 ";
+        }
+        return `<button onclick="jumpToQuestion(${idx})" class="${baseClass}">${idx + 1}</button>`;
+      }).join('');
+
+      const answeredCount = Object.values(userMcqAnswers).filter(arr => arr && arr.length > 0).length;
+      document.getElementById('answered-count-badge').textContent = `ตอบแล้ว ${answeredCount}/${MCQ_DATA.length}`;
+    }
+
+    function renderCurrentQuestion() {
+      const q = MCQ_DATA[currentQIndex];
+      document.getElementById('current-q-num').textContent = currentQIndex + 1;
+      const card = document.getElementById('mcq-question-card');
+
+      const isMulti = q.type === 'multi';
+      const selected = userMcqAnswers[q.id] || [];
+      const showAnswer = isPracticeMode && (isMulti ? selected.length >= q.correct.length : selected.length > 0);
+
+      card.innerHTML = `
+        <div>
+          <div class="flex items-center justify-between gap-2 mb-3">
+            <span class="text-xs px-2.5 py-0.5 rounded-full font-medium bg-brand-100 dark:bg-brand-950 text-brand-700 dark:text-brand-300">
+              #${q.id} ${q.skill} (${q.category})
+            </span>
+            <span class="text-xs px-2.5 py-0.5 rounded-full font-semibold ${isMulti ? 'bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300' : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'}">
+              ${isMulti ? '☑️ เลือก ' + q.correct.length + ' ข้อที่ถูกต้อง' : '🔘 เลือก 1 ข้อที่ถูกต้อง'}
+            </span>
+          </div>
+
+          <h3 class="text-base sm:text-lg font-semibold text-slate-900 dark:text-white leading-snug mb-5">
+            ${q.question}
+          </h3>
+
+          <div class="space-y-2.5">
+            ${q.options.map((opt, optIdx) => {
+              const isChecked = selected.includes(optIdx);
+              const isCorrectOpt = q.correct.includes(optIdx);
+              let optStyle = "border-slate-200 dark:border-slate-700/80 hover:bg-slate-50 dark:hover:bg-slate-800/60";
+
+              if (showAnswer || examSubmitted) {
+                if (isCorrectOpt) {
+                  optStyle = "border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-200 font-medium";
+                } else if (isChecked && !isCorrectOpt) {
+                  optStyle = "border-rose-500 bg-rose-50 dark:bg-rose-950/40 text-rose-900 dark:text-rose-200";
+                }
+              } else if (isChecked) {
+                optStyle = "border-brand-500 bg-brand-50/50 dark:bg-brand-950/40 font-medium";
+              }
+
+              return `
+                <div onclick="handleSelectOption(${q.id}, ${optIdx}, '${q.type}')" class="flex items-start gap-3 p-3.5 rounded-xl border text-xs sm:text-sm cursor-pointer transition select-none ${optStyle}">
+                  <input type="${isMulti ? 'checkbox' : 'radio'}" name="q_${q.id}" value="${optIdx}" ${isChecked ? 'checked' : ''} class="mt-0.5 text-brand-600 rounded pointer-events-none">
+                  <span class="leading-relaxed flex-1">${opt}</span>
+                  ${(showAnswer || examSubmitted) && isCorrectOpt ? '<span class="text-emerald-600 text-sm">✓ ถูกต้อง</span>' : ''}
+                  ${(showAnswer || examSubmitted) && isChecked && !isCorrectOpt ? '<span class="text-rose-600 text-sm">✕ ผิด</span>' : ''}
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+
+        ${(showAnswer || examSubmitted) ? `
+          <div class="mt-6 p-4 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm">
+            <div class="font-bold text-slate-800 dark:text-slate-100 mb-1 flex items-center gap-1.5">
+              <span>📖 คำอธิบายเฉลยละเอียด:</span>
+            </div>
+            <p class="text-slate-600 dark:text-slate-300 leading-relaxed">${q.explanation}</p>
+          </div>
+        ` : ''}
+      `;
+
+      renderMcqNav();
+    }
+
+    function handleSelectOption(qId, optIdx, type) {
+      if (examSubmitted) return;
+      if (!userMcqAnswers[qId]) {
+        userMcqAnswers[qId] = [];
+      }
+
+      if (type === 'single') {
+        userMcqAnswers[qId] = [optIdx];
+      } else {
+        const idx = userMcqAnswers[qId].indexOf(optIdx);
+        if (idx > -1) {
+          userMcqAnswers[qId].splice(idx, 1);
+        } else {
+          userMcqAnswers[qId].push(optIdx);
+        }
+      }
+
+      localStorage.setItem('c26_mcq_answers', JSON.stringify(userMcqAnswers));
+      renderCurrentQuestion();
+    }
+
+    function navigateQuestion(delta) {
+      const next = currentQIndex + delta;
+      if (next >= 0 && next < MCQ_DATA.length) {
+        currentQIndex = next;
+        renderCurrentQuestion();
+      }
+    }
+
+    function jumpToQuestion(idx) {
+      currentQIndex = idx;
+      renderCurrentQuestion();
+    }
+
+    function toggleExamMode() {
+      isPracticeMode = !isPracticeMode;
+      localStorage.setItem('c26_practice_mode', isPracticeMode);
+      document.getElementById('current-exam-mode-text').textContent = isPracticeMode ? 'ซ้อมทำทีละข้อ (พร้อมเฉลย)' : 'จำลองสอบจริง (เฉลยตอนส่ง)';
+      renderCurrentQuestion();
+    }
+
+    function resetMcqExam() {
+      if (confirm('คุณต้องการรีเซ็ตคำตอบข้อสอบปรนัยทั้งหมดใช่หรือไม่?')) {
+        userMcqAnswers = {};
+        examSubmitted = false;
+        localStorage.removeItem('c26_mcq_answers');
+        localStorage.removeItem('c26_exam_submitted');
+        currentQIndex = 0;
+        renderCurrentQuestion();
+        updateDashboard();
+      }
+    }
+
+    function submitExam() {
+      examSubmitted = true;
+      localStorage.setItem('c26_exam_submitted', 'true');
+      let score = 0;
+      MCQ_DATA.forEach(q => {
+        const ans = userMcqAnswers[q.id] || [];
+        const isCorrect = ans.length === q.correct.length && ans.every(v => q.correct.includes(v));
+        if (isCorrect) score++;
+      });
+      alert(`🎉 ตรวจข้อสอบเสร็จสิ้น! คุณได้คะแนน: ${score} / ${MCQ_DATA.length} (${Math.round((score/MCQ_DATA.length)*100)}%)`);
+      renderCurrentQuestion();
+      updateDashboard();
+    }
+
+    function startTimer() {
+      if (timerInterval) clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        if (timerSeconds > 0) {
+          timerSeconds--;
+          const m = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
+          const s = (timerSeconds % 60).toString().padStart(2, '0');
+          document.getElementById('exam-timer').textContent = `${m}:${s}`;
+        }
+      }, 1000);
+    }
+
+    // -------------------------------------------------------------
+    // CODING LAB (IN-BROWSER TEST RUNNER)
+    // -------------------------------------------------------------
+    function renderCodingProblemList() {
+      const container = document.getElementById('coding-problem-list');
+      container.innerHTML = CODING_DATA.map((prob, idx) => {
+        const isPassed = codingPassState[prob.id] === true;
+        const isActive = idx === activeCodingIndex;
+        return `
+          <button onclick="loadCodingProblem(${idx})" class="w-full text-left p-3 rounded-xl text-xs transition flex items-center justify-between ${isActive ? 'bg-brand-50 dark:bg-brand-950 border border-brand-300 dark:border-brand-800 font-semibold' : 'hover:bg-slate-100 dark:hover:bg-slate-800'}">
+            <div>
+              <div class="text-slate-800 dark:text-slate-200">#${prob.id} ${prob.title}</div>
+              <div class="text-[10px] text-slate-400 font-normal">${prob.category}</div>
+            </div>
+            ${isPassed ? '<span class="text-emerald-600 font-bold">✓ ผ่าน</span>' : '<span class="text-slate-400">◯</span>'}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function loadCodingProblem(idx) {
+      activeCodingIndex = idx;
+      renderCodingProblemList();
+      const prob = CODING_DATA[idx];
+
+      document.getElementById('coding-title').textContent = `#${prob.id} ${prob.title}`;
+      document.getElementById('coding-difficulty').textContent = prob.difficulty;
+      document.getElementById('coding-difficulty').className = `text-xs px-2.5 py-0.5 rounded-full font-medium ${prob.difficulty === 'Easy' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300'}`;
+      document.getElementById('coding-desc').textContent = prob.description;
+
+      const editor = document.getElementById('coding-editor');
+      editor.value = userCodingCodes[prob.id] !== undefined ? userCodingCodes[prob.id] : prob.starterCode;
+
+      editor.oninput = () => {
+        userCodingCodes[prob.id] = editor.value;
+        localStorage.setItem('c26_coding_codes_v2', JSON.stringify(userCodingCodes));
+      };
+
+      document.getElementById('coding-results-box').classList.add('hidden');
+      
+      // Update and hide solution container
+      document.getElementById('coding-solution-box').classList.add('hidden');
+      document.getElementById('btn-toggle-solution').textContent = '💡 ดูเฉลย (Solution)';
+      document.getElementById('coding-solution-code').textContent = prob.solutionCode;
+      document.getElementById('coding-solution-explanation').textContent = prob.explanation;
+    }
+
+    function resetCurrentCode() {
+      const prob = CODING_DATA[activeCodingIndex];
+      document.getElementById('coding-editor').value = prob.starterCode;
+      userCodingCodes[prob.id] = prob.starterCode;
+      localStorage.setItem('c26_coding_codes_v2', JSON.stringify(userCodingCodes));
+      document.getElementById('coding-results-box').classList.add('hidden');
+    }
+
+    function toggleCodingSolution() {
+      const box = document.getElementById('coding-solution-box');
+      const btn = document.getElementById('btn-toggle-solution');
+      const isHidden = box.classList.toggle('hidden');
+      btn.textContent = isHidden ? '💡 ดูเฉลย (Solution)' : '🙈 ซ่อนเฉลย';
+    }
+
+    function loadSolutionToEditor() {
+      if (confirm('คุณต้องการนำโค้ดเฉลยไปวางทับใน Editor ใช่หรือไม่?')) {
+        const prob = CODING_DATA[activeCodingIndex];
+        const editor = document.getElementById('coding-editor');
+        editor.value = prob.solutionCode;
+        userCodingCodes[prob.id] = prob.solutionCode;
+        localStorage.setItem('c26_coding_codes_v2', JSON.stringify(userCodingCodes));
+      }
+    }
+
+    function runCodingTests() {
+      const prob = CODING_DATA[activeCodingIndex];
+      const code = document.getElementById('coding-editor').value;
+      const resultsBox = document.getElementById('coding-results-box');
+      const table = document.getElementById('test-cases-table');
+
+      resultsBox.classList.remove('hidden');
+
+      const startTime = performance.now();
+      let passedCount = 0;
+
+      const funcMatch = prob.starterCode.match(/function\s+([a-zA-Z0-9_]+)/);
+      const funcName = funcMatch ? funcMatch[1] : 'solution';
+
+      table.innerHTML = prob.testCases.map((tc, tcIdx) => {
+        let actual = undefined;
+        let isPass = false;
+        let errorMsg = null;
+
+        try {
+          // Safe evaluation in function scope
+          const runner = new Function(code + `\n\nreturn ${funcName}(...arguments[0]);`);
+          actual = runner(tc.input);
+          isPass = JSON.stringify(actual) === JSON.stringify(tc.expected);
+        } catch (err) {
+          errorMsg = err.message;
+        }
+
+        if (isPass) passedCount++;
+
+        return `
+          <div class="p-3 rounded-xl border text-xs ${isPass ? 'border-emerald-200 bg-emerald-50/60 dark:border-emerald-900/40 dark:bg-emerald-950/20' : 'border-rose-200 bg-rose-50/60 dark:border-rose-900/40 dark:bg-rose-950/20'} flex items-start justify-between gap-3">
+            <div>
+              <div class="font-semibold text-slate-800 dark:text-slate-200 mb-1">
+                Test Case #${tcIdx + 1}: ${tc.desc}
+              </div>
+              <div class="font-mono text-[11px] text-slate-500 dark:text-slate-400 space-y-0.5">
+                <div>Input: <span class="text-slate-700 dark:text-slate-300">${JSON.stringify(tc.input)}</span></div>
+                <div>Expected: <span class="text-emerald-700 dark:text-emerald-400 font-semibold">${JSON.stringify(tc.expected)}</span></div>
+                <div>Actual: <span class="${isPass ? 'text-emerald-700 dark:text-emerald-400' : 'text-rose-700 dark:text-rose-400 font-bold'}">${errorMsg ? 'Error: ' + errorMsg : JSON.stringify(actual)}</span></div>
+              </div>
+            </div>
+            <span class="shrink-0 px-2 py-0.5 rounded text-xs font-semibold ${isPass ? 'bg-emerald-200 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200' : 'bg-rose-200 text-rose-800 dark:bg-rose-900 dark:text-rose-200'}">
+              ${isPass ? 'PASSED ✓' : 'FAILED ✕'}
+            </span>
+          </div>
+        `;
+      }).join('');
+
+      const endTime = performance.now();
+      const elapsed = (endTime - startTime).toFixed(2);
+      document.getElementById('tests-exec-time').textContent = `Execution Time: ${elapsed} ms`;
+
+      const allPassed = passedCount === prob.testCases.length;
+      codingPassState[prob.id] = allPassed;
+      localStorage.setItem('c26_coding_pass', JSON.stringify(codingPassState));
+
+      const summaryBadge = document.getElementById('tests-summary-badge');
+      summaryBadge.textContent = `${passedCount}/${prob.testCases.length} ผ่าน`;
+      summaryBadge.className = `text-xs px-2.5 py-0.5 rounded-full font-medium ${allPassed ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200' : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-200'}`;
+
+      renderCodingProblemList();
+      updateDashboard();
+    }
+
+    // -------------------------------------------------------------
+    // AI PROMPT & CONTEXT OPTIMIZATION SIMULATOR LOGIC
+    // -------------------------------------------------------------
+    function selectPromptScenario(idx) {
+      activePromptIndex = idx;
+      const sc = PROMPT_DATA[idx];
+
+      // Update scenario buttons
+      for (let i = 0; i < PROMPT_DATA.length; i++) {
+        const btn = document.getElementById(`btn-sc-${i}`);
+        if (i === idx) {
+          btn.className = "px-3 py-1 text-xs rounded-lg font-medium transition bg-brand-600 text-white";
+        } else {
+          btn.className = "px-3 py-1 text-xs rounded-lg font-medium transition text-slate-400 hover:text-white";
+        }
+      }
+
+      document.getElementById('prompt-sc-ticket').textContent = sc.ticket;
+      document.getElementById('prompt-sc-title').textContent = sc.title;
+      document.getElementById('prompt-sc-problem').textContent = sc.problemStatement;
+      document.getElementById('prompt-sc-context').textContent = sc.contextSnippet;
+      document.getElementById('prompt-sc-requirements').textContent = sc.taskRequirements;
+
+      const input = document.getElementById('prompt-input');
+      input.value = userPrompts[idx] || '';
+      updatePromptCounters();
+
+      document.getElementById('rubric-result-box').classList.add('hidden');
+      document.getElementById('gold-prompt-container').classList.add('hidden');
+      document.getElementById('gold-prompt-container').textContent = sc.goldPrompt;
+    }
+
+    function insertTag(openTag, closeTag) {
+      const textarea = document.getElementById('prompt-input');
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const text = textarea.value;
+      const selected = text.substring(start, end);
+      const replacement = `${openTag}\n${selected || '  // ใส่รายละเอียดที่นี่...'}\n${closeTag}`;
+      textarea.value = text.substring(0, start) + replacement + text.substring(end);
+      textarea.focus();
+      userPrompts[activePromptIndex] = textarea.value;
+      localStorage.setItem('c26_user_prompts', JSON.stringify(userPrompts));
+      updatePromptCounters();
+    }
+
+    function updatePromptCounters() {
+      const text = document.getElementById('prompt-input').value.trim();
+      const words = text ? text.split(/\s+/).length : 0;
+      document.getElementById('prompt-word-count').textContent = words;
+      document.getElementById('prompt-char-count').textContent = text.length;
+    }
+
+    function evaluateCandidatePrompt() {
+      const sc = PROMPT_DATA[activePromptIndex];
+      const text = document.getElementById('prompt-input').value.trim();
+      const lower = text.toLowerCase();
+
+      if (!text || text.length < 30) {
+        alert('กรุณาพิมพ์ Prompt ให้สมบูรณ์ก่อนทำการประเมินคะแนนครับ');
+        return;
+      }
+
+      // Rubric Scoring (4 Dimensions, 25 points each = 100 total)
+      let score1 = 0; // Context Completeness & SNR (25 pts)
+      let score2 = 0; // Structure & Delimiters (25 pts)
+      let score3 = 0; // Negative Constraints & Guardrails (25 pts)
+      let score4 = 0; // Output Usability & Schema (25 pts)
+
+      const feedback = [];
+
+      // D1: Context & Technical Grounding
+      if (lower.includes('table') || lower.includes('orders') || lower.includes('payment') || lower.includes('service') || lower.includes('jest') || lower.includes('sql') || lower.includes('document')) {
+        score1 += 15;
+      }
+      if (text.length >= 120 && text.length <= 1500) {
+        score1 += 10; // Optimal length (not too bloated, not too terse)
+        feedback.push('✅ บริบทมีความยาวพอเหมาะ ไม่เปลือง Token (Good SNR)');
+      } else if (text.length > 1500) {
+        score1 += 4;
+        feedback.push('⚠️ Prompt มีความยาวมากเกินไป อาจมี Noise ที่ไม่จำเป็น');
+      } else {
+        feedback.push('⚠️ บริบทสั้นเกินไป ขาดข้อมูลแวดล้อมทางเทคนิคที่จำเป็น');
+      }
+
+      // D2: Structure & Delimiters (XML / Markdown)
+      const hasXmlTags = /<[a-zA-Z0-9_-]+>/.test(text) && /<\/[a-zA-Z0-9_-]+>/.test(text);
+      const hasMarkdownHeaders = /^###?\s+/m.test(text);
+
+      if (hasXmlTags) {
+        score2 += 25;
+        feedback.push('✅ ใช้ XML Tags แบ่งสัดส่วนข้อมูลอย่างยอดเยี่ยม (<context>, <constraints>, etc.)');
+      } else if (hasMarkdownHeaders) {
+        score2 += 18;
+        feedback.push('✅ ใช้ Markdown Headers แบ่ง Section ได้ดี (แนะนำให้ใช้ XML tags เพิ่มความคม)');
+      } else {
+        score2 += 8;
+        feedback.push('⚠️ ยังขาด Delimiters ชัดเจน ข้อความยังเป็นพารากราฟทั่วไป');
+      }
+
+      // D3: Negative Constraints & Guardrails
+      const hasNegative = /ห้าม|do not|don't|never|without|only|strict|maintain|keep|no /i.test(text);
+      if (hasNegative) {
+        score3 += 25;
+        feedback.push('✅ มี Negative Constraints กำหนดขอบเขตและสิ่งที่ห้ามทำอย่างรัดกุม');
+      } else {
+        score3 += 8;
+        feedback.push('⚠️ ยังขาด Negative Constraints (เช่น ห้ามเปลี่ยน signature, ห้ามต่อ DB จริง)');
+      }
+
+      // D4: Output Format & Usability
+      const hasFormatSpec = /output|json|markdown|format|code block|codeblock|ตาราง|pure code/i.test(text);
+      if (hasFormatSpec) {
+        score4 += 25;
+        feedback.push('✅ กำหนดรูปแบบผลลัพธ์ (Output Format) ชัดเจน นำไปใช้ใน Production ได้ทันที');
+      } else {
+        score4 += 10;
+        feedback.push('⚠️ ไม่ได้บังคับรูปแบบผลลัพธ์ ทำให้ AI อาจตอบคำทักทายหรือคำอธิบายเยิ่นเย้อ');
+      }
+
+      const total = score1 + score2 + score3 + score4;
+      promptScores[sc.id] = total;
+      localStorage.setItem('c26_prompt_scores', JSON.stringify(promptScores));
+
+      // Display results
+      const box = document.getElementById('rubric-result-box');
+      box.classList.remove('hidden');
+      document.getElementById('rubric-total-score').textContent = `${total}/100`;
+
+      let statusText = "ต้องปรับปรุงเพิ่มเติม";
+      if (total >= 85) statusText = "ยอดเยี่ยมมาก! ระดับ Senior / Lead (Production Ready)";
+      else if (total >= 70) statusText = "ดี! ผ่านเกณฑ์ระดับ Intermediate";
+      document.getElementById('rubric-status-text').textContent = statusText;
+
+      const dimContainer = document.getElementById('rubric-dimensions-container');
+      dimContainer.innerHTML = `
+        <div class="p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950">
+          <div class="flex justify-between text-xs font-semibold mb-1">
+            <span>1. Context & SNR</span>
+            <span class="text-brand-600">${score1}/25</span>
+          </div>
+          <div class="w-full h-1.5 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
+            <div class="h-full bg-brand-500 rounded-full" style="width: ${(score1/25)*100}%"></div>
+          </div>
+        </div>
+        <div class="p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950">
+          <div class="flex justify-between text-xs font-semibold mb-1">
+            <span>2. Delimiters & Structure</span>
+            <span class="text-indigo-600">${score2}/25</span>
+          </div>
+          <div class="w-full h-1.5 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
+            <div class="h-full bg-indigo-500 rounded-full" style="width: ${(score2/25)*100}%"></div>
+          </div>
+        </div>
+        <div class="p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950">
+          <div class="flex justify-between text-xs font-semibold mb-1">
+            <span>3. Constraints & Guardrails</span>
+            <span class="text-amber-600">${score3}/25</span>
+          </div>
+          <div class="w-full h-1.5 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
+            <div class="h-full bg-amber-500 rounded-full" style="width: ${(score3/25)*100}%"></div>
+          </div>
+        </div>
+        <div class="p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950">
+          <div class="flex justify-between text-xs font-semibold mb-1">
+            <span>4. Output Format Usability</span>
+            <span class="text-emerald-600">${score4}/25</span>
+          </div>
+          <div class="w-full h-1.5 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
+            <div class="h-full bg-emerald-500 rounded-full" style="width: ${(score4/25)*100}%"></div>
+          </div>
+        </div>
+      `;
+
+      const fbBox = document.getElementById('rubric-feedback-list');
+      fbBox.innerHTML = feedback.map(f => `<div>${f}</div>`).join('');
+
+      updateDashboard();
+    }
+
+    function toggleGoldPrompt() {
+      const container = document.getElementById('gold-prompt-container');
+      const btn = document.getElementById('btn-toggle-gold');
+      const isHidden = container.classList.toggle('hidden');
+      btn.textContent = isHidden ? '👁️ ดูเฉลย Prompt ต้นแบบระดับ 100 คะแนนเต็ม (Gold Standard)' : '🙈 ซ่อนเฉลย Prompt ต้นแบบ';
+    }
+
+    // -------------------------------------------------------------
+    // DASHBOARD & ANALYTICS
+    // -------------------------------------------------------------
+    function updateDashboard() {
+      // MCQ Score
+      let mcqCorrect = 0;
+      MCQ_DATA.forEach(q => {
+        const ans = userMcqAnswers[q.id] || [];
+        if (ans.length === q.correct.length && ans.every(v => q.correct.includes(v))) {
+          mcqCorrect++;
+        }
+      });
+      const mcqPct = Math.round((mcqCorrect / MCQ_DATA.length) * 100);
+      document.getElementById('dash-mcq-score').textContent = `${mcqPct}%`;
+      document.getElementById('dash-mcq-sub').textContent = `ถูกต้อง ${mcqCorrect}/${MCQ_DATA.length} ข้อ`;
+
+      // Coding Score
+      const codingPassedCount = Object.values(codingPassState).filter(v => v === true).length;
+      const codingPct = Math.round((codingPassedCount / CODING_DATA.length) * 100);
+      document.getElementById('dash-coding-score').textContent = `${codingPct}%`;
+      document.getElementById('dash-coding-sub').textContent = `ผ่าน ${codingPassedCount}/${CODING_DATA.length} โจทย์`;
+
+      // Prompt Average
+      const promptValues = Object.values(promptScores);
+      const promptAvg = promptValues.length > 0 ? Math.round(promptValues.reduce((a, b) => a + b, 0) / promptValues.length) : 0;
+      document.getElementById('dash-prompt-score').textContent = `${promptAvg}/100`;
+      document.getElementById('dash-prompt-sub').textContent = `ประเมินแล้ว ${promptValues.length}/${PROMPT_DATA.length} โจทย์`;
+
+      // Readiness Badge
+      let overallRating = "ยังไม่เริ่มทดสอบ";
+      if (mcqPct >= 80 && codingPct >= 75 && promptAvg >= 80) {
+        overallRating = "🚀 พร้อมสอบระดับ Senior / Lead";
+      } else if (mcqPct >= 60 || codingPct >= 50 || promptAvg >= 60) {
+        overallRating = "📈 ระดับ Intermediate กำลังพัฒนา";
+      } else if (mcqPct > 0 || codingPct > 0 || promptAvg > 0) {
+        overallRating = "🌱 ระดับ Beginner เริ่มต้น";
+      }
+      document.getElementById('dash-readiness-badge').textContent = overallRating;
+
+      // Category breakdown
+      const categories = [
+        "Software Design and Architecture",
+        "Software Engineering & Development",
+        "Infrastructure & DevOps",
+        "Security",
+        "ProblemSolving",
+        "future skill"
+      ];
+
+      const catContainer = document.getElementById('dash-category-progress');
+      catContainer.innerHTML = categories.map(cat => {
+        const catQuestions = MCQ_DATA.filter(q => q.category === cat);
+        let correctInCat = 0;
+        catQuestions.forEach(q => {
+          const ans = userMcqAnswers[q.id] || [];
+          if (ans.length === q.correct.length && ans.every(v => q.correct.includes(v))) {
+            correctInCat++;
+          }
+        });
+        const pct = catQuestions.length > 0 ? Math.round((correctInCat / catQuestions.length) * 100) : 0;
+        return `
+          <div>
+            <div class="flex justify-between text-xs font-semibold mb-1">
+              <span class="text-slate-700 dark:text-slate-300">${cat}</span>
+              <span class="text-slate-500">${correctInCat}/${catQuestions.length} (${pct}%)</span>
+            </div>
+            <div class="w-full h-2 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+              <div class="h-full bg-brand-500 rounded-full transition-all duration-500" style="width: ${pct}%"></div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+  </script>
+</body>
+</html>
