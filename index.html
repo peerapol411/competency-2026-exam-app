@@ -795,23 +795,29 @@
         return `<div class="my-4 p-4 rounded-2xl bg-amber-500/10 border-l-4 border-amber-500 text-amber-900 dark:text-amber-200 text-xs sm:text-sm leading-relaxed">${content}</div>`;
       });
 
-      // 4. Headers
-      html = html.replace(/^###\s+(.+)$/gm, '<h3 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mt-6 mb-2">$1</h3>');
-      html = html.replace(/^####\s+(.+)$/gm, '<h4 class="text-base font-semibold text-slate-800 dark:text-slate-100 mt-4 mb-1.5">$1</h4>');
+      // 4. Horizontal Rules (--- or ***)
+      html = html.replace(/^\s*[-*]{3,}\s*$/gm, '<hr class="my-6 border-t border-slate-200 dark:border-slate-800">');
 
-      // 5. Unordered lists (* or -)
+      // 5. Headers (# ## ### ####)
+      html = html.replace(/^#\s+(.+)$/gm, '<h1 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mt-8 mb-3">$1</h1>');
+      html = html.replace(/^##\s+(.+)$/gm, '<h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mt-6 mb-2 pb-1 border-b border-slate-100 dark:border-slate-800">$1</h2>');
+      html = html.replace(/^###\s+(.+)$/gm, '<h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white mt-6 mb-2">$1</h3>');
+      html = html.replace(/^####\s+(.+)$/gm, '<h4 class="text-sm sm:text-base font-semibold text-slate-800 dark:text-slate-100 mt-4 mb-1.5">$1</h4>');
+
+      // 6. Unordered lists (* or -)
       html = html.replace(/^\s*[-*]\s+(.+)$/gm, '<div class="flex items-start gap-2 text-xs sm:text-sm my-1"><span class="text-brand-500 shrink-0 font-bold">•</span><span>$1</span></div>');
 
-      // 6. Numbered lists (1. )
+      // 7. Numbered lists (1. )
       html = html.replace(/^\s*(\d+)\.\s+(.+)$/gm, '<div class="flex items-start gap-2 text-xs sm:text-sm my-1"><span class="font-bold text-brand-600 dark:text-brand-400 shrink-0">$1.</span><span>$2</span></div>');
 
-      // 7. Bold
+      // 8. Bold & Math
       html = html.replace(/\*\*([^*]+)\*\*/g, '<strong class="font-bold text-slate-900 dark:text-white">$1</strong>');
+      html = html.replace(/\$([^$\n]+)\$/g, '<span class="font-mono text-brand-600 dark:text-brand-400 font-semibold">$1</span>');
 
-      // 8. Inline code (`code`)
+      // 9. Inline code (`code`)
       html = html.replace(/`([^`]+)`/g, '<code class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-brand-600 dark:text-brand-400 font-mono text-[11px] sm:text-xs">$1</code>');
 
-      // 9. Paragraph linebreaks
+      // 10. Paragraph linebreaks
       html = html.replace(/\n\n/g, '<div class="h-3"></div>');
 
       return html;
