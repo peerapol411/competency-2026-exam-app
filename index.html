@@ -787,7 +787,7 @@
   <footer class="mt-auto py-6 border-t border-slate-200 dark:border-slate-800 text-center text-xs text-slate-500 dark:text-slate-400 space-y-1 bg-white/50 dark:bg-slate-900/50 backdrop-blur">
     <div class="flex items-center justify-center gap-2 font-medium">
       <span>Competency 2026 Interactive Exam Simulator</span>
-      <span class="px-2 py-0.5 rounded-full font-mono font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 text-[10px] border border-emerald-300/30">v2.4.0 (16 พ.ย. 2026)</span>
+      <span class="px-2 py-0.5 rounded-full font-mono font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 text-[10px] border border-emerald-300/30">v2.4.1 (17 พ.ย. 2026)</span>
     </div>
     <p class="text-[11px] text-slate-400">พัฒนาสำหรับเตรียมสอบ CoE Competency 2026 • ตารางอ่านสอบ 7 วัน • 15 Skills (Priority Stars) • 120 Hardcore MCQs (~78% Multi-Select 2-3 ข้อ) • 8 Software Coding + 4 SQL Sprint • 4 AI Prompts</p>
   </footer>
@@ -964,16 +964,28 @@
                     const isSelected = selectedOpt === optIdx;
                     const isCorrectChoice = optIdx === q.correct;
                     let style = "border-slate-200 dark:border-slate-700/80 hover:bg-slate-100 dark:hover:bg-slate-800";
+                    let badgeHtml = '';
 
                     if (isAnswered) {
-                      if (isCorrectChoice) style = "border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-200 font-medium";
-                      else if (isSelected && !isCorrectChoice) style = "border-rose-500 bg-rose-50 dark:bg-rose-950/40 text-rose-900 dark:text-rose-200";
+                      if (isSelected && isCorrectChoice) {
+                        style = "border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-200 font-medium";
+                        badgeHtml = '<span class="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/70 text-emerald-700 dark:text-emerald-300 font-bold text-[11px] shrink-0">✓ เลือกถูก</span>';
+                      } else if (!isSelected && isCorrectChoice) {
+                        style = "border-amber-400 border-dashed bg-amber-50/70 dark:bg-amber-950/25 text-slate-800 dark:text-slate-200 font-medium";
+                        badgeHtml = '<span class="px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/70 text-amber-800 dark:text-amber-300 font-bold text-[11px] shrink-0">💡 เฉลย (ข้อที่ถูก)</span>';
+                      } else if (isSelected && !isCorrectChoice) {
+                        style = "border-rose-500 bg-rose-50 dark:bg-rose-950/40 text-rose-900 dark:text-rose-200";
+                        badgeHtml = '<span class="px-2 py-0.5 rounded-full bg-rose-100 dark:bg-rose-900/70 text-rose-700 dark:text-rose-300 font-bold text-[11px] shrink-0">✕ เลือกผิด</span>';
+                      } else {
+                        style = "border-slate-200 dark:border-slate-700/60 opacity-70";
+                      }
                     }
 
                     return `
                       <div onclick="handleSelectQuizOption('${q.id}', ${optIdx})" class="flex items-start gap-2.5 p-3 rounded-xl border text-xs cursor-pointer transition select-none ${style}">
                         <input type="radio" name="quiz_${q.id}" value="${optIdx}" ${isSelected ? 'checked' : ''} class="mt-0.5 text-brand-600 pointer-events-none">
                         <span class="flex-1 leading-relaxed">${formatQuizText(opt)}</span>
+                        ${badgeHtml}
                       </div>
                     `;
                   }).join('')}
@@ -2089,6 +2101,10 @@
         ? '☑️ เลือกทุกข้อที่ถูกต้อง (ไม่บอกจำนวน)'
         : `☑️ เลือก ${q.correct.length} ข้อที่ถูกต้อง`;
 
+      const matchedCount = q.correct.filter(c => selected.includes(c)).length;
+      const wrongSelectedCount = selected.filter(s => !q.correct.includes(s)).length;
+      const isWholeCorrect = selected.length === q.correct.length && matchedCount === q.correct.length;
+
       card.innerHTML = `
         <div>
           <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
@@ -2114,12 +2130,20 @@
               const isChecked = selected.includes(optIdx);
               const isCorrectOpt = q.correct.includes(optIdx);
               let optStyle = "border-slate-200 dark:border-slate-700/80 hover:bg-slate-50 dark:hover:bg-slate-800/60";
+              let optBadge = '';
 
               if (showAnswer) {
-                if (isCorrectOpt) {
+                if (isChecked && isCorrectOpt) {
                   optStyle = "border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-200 font-medium";
+                  optBadge = '<span class="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/70 text-emerald-700 dark:text-emerald-300 font-bold text-[11px] shrink-0">✓ เลือกถูก</span>';
+                } else if (!isChecked && isCorrectOpt) {
+                  optStyle = "border-amber-400 border-dashed bg-amber-50/70 dark:bg-amber-950/25 text-slate-800 dark:text-slate-200 font-medium";
+                  optBadge = '<span class="px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/70 text-amber-800 dark:text-amber-300 font-bold text-[11px] shrink-0">💡 เฉลย (ยังไม่ได้เลือก)</span>';
                 } else if (isChecked && !isCorrectOpt) {
                   optStyle = "border-rose-500 bg-rose-50 dark:bg-rose-950/40 text-rose-900 dark:text-rose-200";
+                  optBadge = '<span class="px-2 py-0.5 rounded-full bg-rose-100 dark:bg-rose-900/70 text-rose-700 dark:text-rose-300 font-bold text-[11px] shrink-0">✕ เลือกผิด</span>';
+                } else {
+                  optStyle = "border-slate-200 dark:border-slate-700/60 opacity-70";
                 }
               } else if (isChecked) {
                 optStyle = "border-brand-500 bg-brand-50/50 dark:bg-brand-950/40 font-medium";
@@ -2129,8 +2153,7 @@
                 <div onclick="handleSelectOption(${q.id}, ${optIdx}, '${q.type}')" class="flex items-start gap-3 p-3.5 rounded-xl border text-xs sm:text-sm cursor-pointer transition select-none ${optStyle}">
                   <input type="${isMulti ? 'checkbox' : 'radio'}" name="q_${q.id}" value="${optIdx}" ${isChecked ? 'checked' : ''} class="mt-0.5 text-brand-600 rounded pointer-events-none">
                   <span class="leading-relaxed flex-1">${formatQuizText(opt)}</span>
-                  ${showAnswer && isCorrectOpt ? '<span class="text-emerald-600 font-semibold text-xs shrink-0">✓ ถูกต้อง</span>' : ''}
-                  ${showAnswer && isChecked && !isCorrectOpt ? '<span class="text-rose-600 font-semibold text-xs shrink-0">✕ ผิด</span>' : ''}
+                  ${optBadge}
                 </div>
               `;
             }).join('')}
@@ -2146,11 +2169,19 @@
         </div>
 
         ${showAnswer ? `
-          <div class="mt-6 p-4 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm">
-            <div class="font-bold text-slate-800 dark:text-slate-100 mb-1 flex items-center gap-1.5">
-              <span>📖 คำอธิบายเฉลยละเอียด:</span>
+          <div class="mt-6 space-y-2.5">
+            <div class="px-4 py-2.5 rounded-xl border text-xs sm:text-sm font-bold flex flex-wrap items-center justify-between gap-2 ${isWholeCorrect ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200' : 'bg-rose-50 dark:bg-rose-950/40 border-rose-300 dark:border-rose-800 text-rose-800 dark:text-rose-200'}">
+              <span>${isWholeCorrect
+                ? `🎉 ข้อนี้ตอบถูกครบทั้งหมด (${matchedCount}/${q.correct.length} ข้อ)`
+                : `❌ ข้อนี้ตอบไม่ถูกครบ (เลือกถูก ${matchedCount}/${q.correct.length} ข้อ${wrongSelectedCount > 0 ? `, เลือกผิด ${wrongSelectedCount} ข้อ` : ''} — ต้องถูกครบทุกข้อจึงได้คะแนน)`
+              }</span>
             </div>
-            <p class="text-slate-600 dark:text-slate-300 leading-relaxed">${formatQuizText(q.explanation)}</p>
+            <div class="p-4 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm">
+              <div class="font-bold text-slate-800 dark:text-slate-100 mb-1 flex items-center gap-1.5">
+                <span>📖 คำอธิบายเฉลยละเอียด:</span>
+              </div>
+              <p class="text-slate-600 dark:text-slate-300 leading-relaxed">${formatQuizText(q.explanation)}</p>
+            </div>
           </div>
         ` : ''}
       `;
