@@ -73,6 +73,9 @@
           <button onclick="switchTab('notes')" id="nav-notes" class="nav-tab px-3 py-1.5 rounded-lg transition-all text-brand-600 dark:text-brand-400 bg-white dark:bg-slate-700 shadow-sm font-semibold whitespace-nowrap flex items-center gap-1.5">
             <span>📚</span> <span>Study Notes</span>
           </button>
+          <button onclick="switchTab('plan')" id="nav-plan" class="nav-tab px-3 py-1.5 rounded-lg transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white whitespace-nowrap flex items-center gap-1.5">
+            <span>📅</span> <span>ตารางอ่านสอบ</span>
+          </button>
           <button onclick="switchTab('mcq')" id="nav-mcq" class="nav-tab px-3 py-1.5 rounded-lg transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white whitespace-nowrap flex items-center gap-1.5">
             <span>📝</span> <span>Multiple Choice (120)</span>
           </button>
@@ -104,6 +107,7 @@
       <!-- Mobile & Tablet Sub-Navbar (< lg:) -->
       <div class="flex lg:hidden overflow-x-auto py-2.5 border-t border-slate-200 dark:border-slate-800 gap-2 text-xs font-medium custom-scrollbar">
         <button onclick="switchTab('notes')" id="m-nav-notes" class="m-nav-tab px-3.5 py-1.5 rounded-lg whitespace-nowrap bg-brand-600 text-white font-semibold shadow-sm flex items-center gap-1.5 shrink-0">📚 Study Notes</button>
+        <button onclick="switchTab('plan')" id="m-nav-plan" class="m-nav-tab px-3.5 py-1.5 rounded-lg whitespace-nowrap bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium flex items-center gap-1.5 shrink-0">📅 ตารางอ่านสอบ</button>
         <button onclick="switchTab('mcq')" id="m-nav-mcq" class="m-nav-tab px-3.5 py-1.5 rounded-lg whitespace-nowrap bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium flex items-center gap-1.5 shrink-0">📝 Multiple Choice (120)</button>
         <button onclick="switchTab('coding')" id="m-nav-coding" class="m-nav-tab px-3.5 py-1.5 rounded-lg whitespace-nowrap bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium flex items-center gap-1.5 shrink-0">💻 Coding Lab (8)</button>
         <button onclick="switchTab('prompt')" id="m-nav-prompt" class="m-nav-tab px-3.5 py-1.5 rounded-lg whitespace-nowrap bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium flex items-center gap-1.5 shrink-0">🤖 AI Context Sim (4)</button>
@@ -200,6 +204,9 @@
             <button onclick="setMcqPoolMode('random20')" id="btn-pool-random" class="px-3 py-1.5 rounded-lg transition-all font-semibold flex items-center gap-1">
               <span>🎲</span> <span>สุ่มเร็ว 20 ข้อ</span>
             </button>
+            <button onclick="setMcqPoolMode('studyplan')" id="btn-pool-plan" class="px-3 py-1.5 rounded-lg transition-all font-semibold flex items-center gap-1">
+              <span>📅</span> <span>สุ่มตามตารางอ่าน/วิชา</span>
+            </button>
             <button onclick="setMcqPoolMode('all')" id="btn-pool-all" class="px-3 py-1.5 rounded-lg transition-all flex items-center gap-1">
               <span>📚</span> <span>คลังทั้งหมด (120 ข้อ)</span>
             </button>
@@ -248,6 +255,28 @@
         </div>
         <div class="grid grid-cols-2 sm:grid-cols-5 gap-2" id="hr-sections-pills">
           <!-- Injected via JS -->
+        </div>
+      </div>
+
+      <!-- Study Plan / Topic Mixed Quiz Bar (Shown only in studyplan mode) -->
+      <div id="studyplan-quiz-bar" class="bg-gradient-to-r from-brand-50 via-white to-indigo-50 dark:from-slate-900 dark:via-slate-900 dark:to-indigo-950/30 p-3.5 rounded-2xl border border-brand-200 dark:border-brand-800/60 shadow-sm hidden">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="space-y-1">
+            <div class="text-xs font-bold text-brand-700 dark:text-brand-300 flex items-center gap-1.5">
+              <span>📅 โหมดสุ่มข้อสอบตามตารางอ่านหนังสือ (คละทั้ง Multiple Choice + Multiple Select)</span>
+            </div>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400" id="studyplan-quiz-summary">
+              เลือกหมวดวันอ่านหนังสือหรือรายวิชา เพื่อสุ่มลำดับข้อและฝึกสลับ Single-Choice กับ Multi-Select
+            </p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2 shrink-0">
+            <select id="studyplan-topic-select" onchange="changeStudyPlanQuizTarget()" class="text-xs font-medium px-3 py-2 rounded-xl border border-brand-300 dark:border-brand-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 max-w-xs sm:max-w-sm shadow-sm">
+              <!-- Populated via JS -->
+            </select>
+            <button onclick="reshuffleStudyPlanQuiz()" class="text-xs font-semibold px-3 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white shadow-sm transition flex items-center gap-1">
+              <span>🔀</span> <span>สุ่มลำดับใหม่</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -600,6 +629,75 @@
       </div>
     </section>
 
+    <!-- ========================================================================= -->
+    <!-- TAB: 7-DAY STUDY PLAN (16-23 NOV 2026)                                    -->
+    <!-- ========================================================================= -->
+    <section id="tab-plan" class="tab-pane hidden space-y-6">
+      <!-- Header Banner & Progress -->
+      <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-sm">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div class="space-y-1.5">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-50 dark:bg-brand-950/50 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800/60 text-xs font-bold">
+              <span>📅 ตารางอ่านหนังสือเตรียมสอบ CoE Competency 2026</span>
+              <span class="font-mono">16–23 พ.ย. 69</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+              แผนอ่าน 7 วันเก็บครบ 100% Weight ก่อนสอบจริง (จันทร์ 23 พ.ย.)
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+              เรียงตาม <strong class="text-slate-700 dark:text-slate-200">⭐⭐⭐ High-Weight Priority</strong> และเชื่อมตรงไปยังตำราใน Study Notes + ปุ่ม <strong class="text-brand-600 dark:text-brand-400">สุ่มข้อสอบ (Multiple Choice + Multiple Select)</strong> ของวันนั้นทันที
+            </p>
+          </div>
+          <div class="bg-slate-50 dark:bg-slate-800/70 rounded-2xl p-4 border border-slate-200 dark:border-slate-700/60 min-w-[260px] shrink-0">
+            <div class="flex items-center justify-between text-xs font-semibold mb-1.5">
+              <span class="text-slate-600 dark:text-slate-300">ความคืบหน้าตามแผน</span>
+              <span id="study-plan-progress-text" class="font-mono text-brand-600 dark:text-brand-400 font-bold">0 / 10 ช่วง</span>
+            </div>
+            <div class="w-full h-2.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+              <div id="study-plan-progress-bar" class="h-full bg-gradient-to-r from-brand-500 to-emerald-500 rounded-full transition-all duration-300" style="width: 0%"></div>
+            </div>
+            <div class="mt-2.5 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
+              <span>เวลาอ่านรวม ~17 ชม. 15 น.</span>
+              <button onclick="resetStudyPlanChecks()" class="text-rose-500 hover:underline font-medium">รีเซ็ตติ๊กถูก</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Weight Summary Pills -->
+        <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-wrap gap-2 text-xs">
+          <span class="px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60 font-medium">
+            ⭐⭐⭐ จันทร์–พฤหัส: เก็บ Tier A (7.05% & 5.69%) + Coding
+          </span>
+          <span class="px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 text-indigo-800 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/60 font-medium">
+            ⭐⭐ ศุกร์–เสาร์: Security + Monitoring + AI/Prompt + Tier C + Coding Drill
+          </span>
+          <span class="px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 font-medium">
+            🏆 อาทิตย์: ซ้อมจับเวลาจริง 54 ข้อ (5 Sections) & อุดจุดอ่อน
+          </span>
+        </div>
+      </div>
+
+      <!-- Desktop/Tablet Schedule Table + Responsive Scroll -->
+      <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse min-w-[820px]">
+            <thead>
+              <tr class="bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-700 text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                <th class="py-3.5 px-4 w-12 text-center">เสร็จ</th>
+                <th class="py-3.5 px-4 w-36">วัน / เวลา</th>
+                <th class="py-3.5 px-4 w-32">ช่วงเวลา</th>
+                <th class="py-3.5 px-4">หัวข้อที่อ่าน & ฝึกปฏิบัติ (คลิกเปิดตำราได้ทันที)</th>
+                <th class="py-3.5 px-4 w-64">สุ่มทำข้อสอบตรงหมวดวันนี้</th>
+              </tr>
+            </thead>
+            <tbody id="study-plan-tbody" class="divide-y divide-slate-100 dark:divide-slate-800 text-sm">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
   
     <!-- Fullscreen Study Reader Modal -->
     <div id="study-reader-modal" class="fixed inset-0 z-[100] bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-2 sm:p-4 md:p-6 transition-all duration-300">
@@ -689,9 +787,9 @@
   <footer class="mt-auto py-6 border-t border-slate-200 dark:border-slate-800 text-center text-xs text-slate-500 dark:text-slate-400 space-y-1 bg-white/50 dark:bg-slate-900/50 backdrop-blur">
     <div class="flex items-center justify-center gap-2 font-medium">
       <span>Competency 2026 Interactive Exam Simulator</span>
-      <span class="px-2 py-0.5 rounded-full font-mono font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 text-[10px] border border-emerald-300/30">v2.3.0 (16 พ.ย. 2026)</span>
+      <span class="px-2 py-0.5 rounded-full font-mono font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 text-[10px] border border-emerald-300/30">v2.4.0 (16 พ.ย. 2026)</span>
     </div>
-    <p class="text-[11px] text-slate-400">พัฒนาสำหรับเตรียมสอบ CoE Competency 2026 • 15 Skills (Priority Stars) • 120 Hardcore MCQs (~78% Multi-Select 2-3 ข้อ) • 8 Software Coding + 4 SQL Sprint • 4 AI Prompts</p>
+    <p class="text-[11px] text-slate-400">พัฒนาสำหรับเตรียมสอบ CoE Competency 2026 • ตารางอ่านสอบ 7 วัน • 15 Skills (Priority Stars) • 120 Hardcore MCQs (~78% Multi-Select 2-3 ข้อ) • 8 Software Coding + 4 SQL Sprint • 4 AI Prompts</p>
   </footer>
 
   <!-- Global Application Logic & In-Memory Database -->
@@ -1029,6 +1127,8 @@
     document.addEventListener('DOMContentLoaded', () => {
       initTheme();
       renderSkills(SKILLS_DATA);
+      populateStudyPlanSelector();
+      renderStudyPlan();
       initMcqSimulator();
       setCodingLabMode('js');
       selectPromptScenario(0);
@@ -1232,7 +1332,323 @@
     }
 
     // -------------------------------------------------------------
-    // MULTIPLE CHOICE EXAM LOGIC (HackerRank 5-Section 54Q + Quick 20Q + Full Bank 241Q)
+    // 7-DAY STUDY PLAN (16-23 NOV 2026) & TOPIC MIXED QUIZ LAUNCHER
+    // -------------------------------------------------------------
+    const STUDY_PLAN_DATA = [
+      {
+        id: 'day1',
+        dayLabel: 'จันทร์ 16 พ.ย.',
+        slot: 'เย็น–ค่ำ',
+        duration: '2 ชม. 15 น.',
+        title: 'Tier A Architecture & Core Coding (บท 1–2)',
+        priorityTag: '⭐⭐⭐ High Weight',
+        readings: [
+          { label: '#2 System Design (7.05%)', skillId: 2 },
+          { label: '#1 Microservices (5.69%)', skillId: 1 },
+          { label: '#14 Coding บท 1–2', skillId: 14 }
+        ],
+        labs: [
+          { label: '💻 Coding Lab ข้อ 1–2', action: "jumpToCodingMode('js')" }
+        ],
+        quizTarget: 'day:day1',
+        quizLabel: 'Day 1: System Design + Microservices + Coding',
+        skills: ['System Design', 'Microservices', 'Coding']
+      },
+      {
+        id: 'day2',
+        dayLabel: 'อังคาร 17 พ.ย.',
+        slot: 'เย็น–ค่ำ',
+        duration: '2 ชม. 15 น.',
+        title: 'Database Design, SQL & SQL Sprint (6.78%)',
+        priorityTag: '⭐⭐⭐ High Weight',
+        readings: [
+          { label: '#3 Database Design (7.05%)', skillId: 3 },
+          { label: '#5 SQL (5.69%)', skillId: 5 }
+        ],
+        labs: [
+          { label: '🗄️ SQL Sprint 2 ข้อ (จับเวลา)', action: "jumpToCodingMode('sql')" }
+        ],
+        quizTarget: 'day:day2',
+        quizLabel: 'Day 2: Database Design + SQL',
+        skills: ['Database Design', 'SQL']
+      },
+      {
+        id: 'day3',
+        dayLabel: 'พุธ 18 พ.ย.',
+        slot: 'เย็น–ค่ำ',
+        duration: '2 ชม. 15 น.',
+        title: 'OOP, Testing & Coding Algorithms (บท 3–6)',
+        priorityTag: '⭐⭐⭐ High Weight',
+        readings: [
+          { label: '#8 OOP (7.05%)', skillId: 8 },
+          { label: '#9 Unit & Functional Testing (5.69%)', skillId: 9 },
+          { label: '#14 Coding บท 3–6', skillId: 14 }
+        ],
+        labs: [
+          { label: '💻 Coding Lab ข้อ 3–8', action: "jumpToCodingMode('js')" }
+        ],
+        quizTarget: 'day:day3',
+        quizLabel: 'Day 3: OOP + Testing + Coding',
+        skills: ['OOP', 'Unit & Functional Testing', 'Coding']
+      },
+      {
+        id: 'day4',
+        dayLabel: 'พฤหัส 19 พ.ย.',
+        slot: 'เย็น–ค่ำ',
+        duration: '2 ชม.',
+        title: 'GIT, Web & Mobile Backend + Mock รอบ 1',
+        priorityTag: '⭐⭐⭐ High Weight',
+        readings: [
+          { label: '#4 GIT (7.05%)', skillId: 4 },
+          { label: '#7 Web & Mobile / Backend (7.05%)', skillId: 7 }
+        ],
+        labs: [
+          { label: '🎲 สุ่ม Mock 20 ข้อ', action: "openMcqPoolFromPlan('random20')" }
+        ],
+        quizTarget: 'day:day4',
+        quizLabel: 'Day 4: GIT + Web & Mobile Backend',
+        skills: ['GIT', 'Web & Mobile Development']
+      },
+      {
+        id: 'day5',
+        dayLabel: 'ศุกร์ 20 พ.ย.',
+        slot: 'เย็น–ค่ำ',
+        duration: '2 ชม.',
+        title: 'Security, Monitoring & AI Prompt Coding (6.78%)',
+        priorityTag: '⭐⭐⭐ Security + Prompt',
+        readings: [
+          { label: '#13 Application Security (5.69%)', skillId: 13 },
+          { label: '#6 Monitoring & Logging (5.69%)', skillId: 6 },
+          { label: '#15 AI & Prompt engineer (1.63%)', skillId: 15 }
+        ],
+        labs: [
+          { label: '🤖 AI Prompt Sim 4 ข้อ', action: "switchTab('prompt')" }
+        ],
+        quizTarget: 'day:day5',
+        quizLabel: 'Day 5: Security + Logging + AI',
+        skills: ['Application Security', 'Monitoring and Logging', 'AI & Prompt engineer']
+      },
+      {
+        id: 'day6_am',
+        dayLabel: 'เสาร์ 21 พ.ย.',
+        slot: 'เช้า',
+        duration: '1 ชม. 30 น.',
+        title: 'เก็บครบ Tier C: Container, Cloud, CI/CD',
+        priorityTag: '⭐ Infra & DevOps',
+        readings: [
+          { label: '#10 Container (2.98%)', skillId: 10 },
+          { label: '#12 Cloud (2.98%)', skillId: 12 },
+          { label: '#11 CI/CD (1.63%)', skillId: 11 }
+        ],
+        labs: [],
+        quizTarget: 'day:day6_am',
+        quizLabel: 'Day 6 เช้า: Container + Cloud + CI/CD',
+        skills: ['Container', 'Cloud', 'CI/CD']
+      },
+      {
+        id: 'day6_pm',
+        dayLabel: 'เสาร์ 21 พ.ย.',
+        slot: 'บ่าย',
+        duration: '2 ชม.',
+        title: 'Program Coding Intensive Drill (13.55%) + OOP',
+        priorityTag: '⭐⭐⭐ Highest Section',
+        readings: [
+          { label: 'ทบทวน #14 Coding (13.55%)', skillId: 14 },
+          { label: 'ทบทวน #8 OOP (7.05%)', skillId: 8 }
+        ],
+        labs: [
+          { label: '⏱️ จับเวลา Coding Lab 30 น./ข้อ', action: "jumpToCodingMode('js')" }
+        ],
+        quizTarget: 'day:day6_pm',
+        quizLabel: 'Day 6 บ่าย: Coding + OOP',
+        skills: ['Coding', 'OOP']
+      },
+      {
+        id: 'day6_eve',
+        dayLabel: 'เสาร์ 21 พ.ย.',
+        slot: 'เย็น',
+        duration: '1 ชม.',
+        title: 'ทบทวนคลังข้อสอบปรนัยทุกหมวด & ข้อที่เคยพลาด',
+        priorityTag: '📝 Full Bank Review',
+        readings: [],
+        labs: [
+          { label: '📚 เปิด Study Notes', action: "switchTab('notes')" }
+        ],
+        actionType: 'all',
+        actionLabel: 'เปิดคลังทั้งหมด (120 ข้อ)'
+      },
+      {
+        id: 'day7_am',
+        dayLabel: 'อาทิตย์ 22 พ.ย.',
+        slot: 'เช้า',
+        duration: '1 ชม. 30 น.',
+        title: 'Full Dress Rehearsal (ซ้อมสอบจริง 54 ข้อ 5 Sections)',
+        priorityTag: '🏆 Full Simulation',
+        readings: [],
+        labs: [
+          { label: 'SQL + Prompt Sprint ปิดท้าย', action: "jumpToCodingMode('sql')" }
+        ],
+        actionType: 'hackerrank54',
+        actionLabel: '🏆 เริ่มจำลองสอบจริง 54 ข้อ'
+      },
+      {
+        id: 'day7_pm',
+        dayLabel: 'อาทิตย์ 22 พ.ย.',
+        slot: 'บ่าย',
+        duration: '1 ชม. 30 น.',
+        title: 'อุดจุดอ่อนรายหมวดจากผลซ้อม & พักผ่อนก่อนสอบ',
+        priorityTag: '🔧 Gap Closing',
+        readings: [],
+        labs: [
+          { label: '📊 เปิด Analytics Dashboard', action: "switchTab('dashboard')" }
+        ],
+        actionType: 'dashboard',
+        actionLabel: '📊 ดูหมวดที่ต้องอุดจุดอ่อน'
+      },
+      {
+        id: 'exam_day',
+        dayLabel: 'จันทร์ 23 พ.ย.',
+        slot: 'วันสอบจริง',
+        duration: 'EXAM DAY',
+        isExamDay: true,
+        title: '🎯 วันสอบ CoE Competency 2026 (HackerRank)',
+        note: 'ทำ 54 MCQs (5 Sections 90 น.) + SQL (10 น.) + Prompt (15 น.) + Software Coding (30 น.)'
+      }
+    ];
+
+    let studyPlanChecks = JSON.parse(localStorage.getItem('c26_study_plan_checks') || '{}');
+
+    function jumpToCodingMode(mode) {
+      switchTab('coding');
+      setCodingLabMode(mode);
+    }
+
+    function openMcqPoolFromPlan(pool) {
+      switchTab('mcq');
+      setMcqPoolMode(pool, true);
+    }
+
+    function toggleStudyPlanCheck(id) {
+      studyPlanChecks[id] = !studyPlanChecks[id];
+      localStorage.setItem('c26_study_plan_checks', JSON.stringify(studyPlanChecks));
+      renderStudyPlan();
+    }
+
+    function resetStudyPlanChecks() {
+      if (!confirm('รีเซ็ตสถานะติ๊กถูกในตารางอ่านหนังสือทั้งหมดใช่ไหม?')) return;
+      studyPlanChecks = {};
+      localStorage.removeItem('c26_study_plan_checks');
+      renderStudyPlan();
+    }
+
+    function getSkillPoolStats(skillsArr) {
+      const matched = MCQ_DATA.filter(q => skillsArr.includes(q.skill));
+      const multiCount = matched.filter(q => q.type === 'multi').length;
+      const singleCount = matched.length - multiCount;
+      return { total: matched.length, multiCount, singleCount, matched };
+    }
+
+    function renderStudyPlan() {
+      const tbody = document.getElementById('study-plan-tbody');
+      if (!tbody) return;
+
+      const checkableItems = STUDY_PLAN_DATA.filter(d => !d.isExamDay);
+      const doneCount = checkableItems.filter(d => studyPlanChecks[d.id]).length;
+      const pct = Math.round((doneCount / checkableItems.length) * 100);
+
+      const progText = document.getElementById('study-plan-progress-text');
+      const progBar = document.getElementById('study-plan-progress-bar');
+      if (progText) progText.textContent = `${doneCount} / ${checkableItems.length} ช่วง (${pct}%)`;
+      if (progBar) progBar.style.width = `${pct}%`;
+
+      tbody.innerHTML = STUDY_PLAN_DATA.map(row => {
+        if (row.isExamDay) {
+          return `
+            <tr class="bg-gradient-to-r from-amber-50 via-rose-50 to-amber-50 dark:from-amber-950/30 dark:via-rose-950/20 dark:to-amber-950/30 border-t-2 border-amber-300 dark:border-amber-700/60">
+              <td class="py-4 px-4 text-center text-lg">🏁</td>
+              <td class="py-4 px-4 font-bold text-rose-700 dark:text-rose-300 whitespace-nowrap">${row.dayLabel}</td>
+              <td class="py-4 px-4">
+                <span class="px-2.5 py-1 rounded-lg bg-rose-600 text-white text-xs font-bold font-mono">${row.duration}</span>
+              </td>
+              <td class="py-4 px-4" colspan="2">
+                <div class="font-extrabold text-slate-900 dark:text-white">${row.title}</div>
+                <div class="text-xs text-slate-600 dark:text-slate-300 mt-0.5">${row.note}</div>
+              </td>
+            </tr>
+          `;
+        }
+
+        const isDone = Boolean(studyPlanChecks[row.id]);
+        const readingButtons = (row.readings || []).map(r => `
+          <button onclick="openStudyReader(${r.skillId})" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-100 hover:bg-brand-100 dark:bg-slate-800 dark:hover:bg-brand-900/50 text-slate-700 dark:text-slate-200 hover:text-brand-700 dark:hover:text-brand-300 border border-slate-200 dark:border-slate-700 transition">
+            <span>📖</span><span>${r.label}</span>
+          </button>
+        `).join('');
+
+        const labButtons = (row.labs || []).map(l => `
+          <button onclick="${l.action}" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/50 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/60 transition">
+            <span>${l.label}</span>
+          </button>
+        `).join('');
+
+        let quizColHtml = '';
+        if (row.quizTarget && row.skills) {
+          const stats = getSkillPoolStats(row.skills);
+          quizColHtml = `
+            <div class="space-y-1.5">
+              <button onclick="launchStudyPlanQuiz('${row.quizTarget}')" class="w-full px-3 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold shadow-sm transition flex items-center justify-center gap-1.5">
+                <span>🎯</span>
+                <span>สุ่มทำข้อสอบวันนี้ (${stats.total} ข้อ)</span>
+              </button>
+              <div class="flex items-center justify-center gap-1.5 text-[10px] font-medium">
+                <span class="px-2 py-0.5 rounded-full bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300">☑️ Multi-Select ${stats.multiCount}</span>
+                <span class="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">🔘 Single ${stats.singleCount}</span>
+              </div>
+            </div>
+          `;
+        } else if (row.actionType === 'all' || row.actionType === 'hackerrank54') {
+          quizColHtml = `
+            <button onclick="openMcqPoolFromPlan('${row.actionType}')" class="w-full px-3 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-sm transition">
+              ${row.actionLabel}
+            </button>
+          `;
+        } else if (row.actionType === 'dashboard') {
+          quizColHtml = `
+            <button onclick="switchTab('dashboard')" class="w-full px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition">
+              ${row.actionLabel}
+            </button>
+          `;
+        }
+
+        return `
+          <tr class="${isDone ? 'bg-emerald-50/40 dark:bg-emerald-950/10 opacity-80' : 'hover:bg-slate-50/80 dark:hover:bg-slate-800/30'} transition">
+            <td class="py-3.5 px-4 text-center align-top">
+              <button onclick="toggleStudyPlanCheck('${row.id}')" class="w-6 h-6 rounded-lg border-2 flex items-center justify-center mx-auto transition ${isDone ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-slate-300 dark:border-slate-600 hover:border-brand-500'}" title="ทำเครื่องหมายว่าอ่านช่วงนี้เสร็จแล้ว">
+                ${isDone ? '✓' : ''}
+              </button>
+            </td>
+            <td class="py-3.5 px-4 align-top">
+              <div class="font-bold text-slate-900 dark:text-white whitespace-nowrap">${row.dayLabel}</div>
+              <span class="inline-block mt-1 text-[10px] px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60 font-semibold">${row.priorityTag}</span>
+            </td>
+            <td class="py-3.5 px-4 align-top">
+              <div class="font-semibold text-slate-700 dark:text-slate-200">${row.slot}</div>
+              <div class="text-xs font-mono text-slate-500 dark:text-slate-400 mt-0.5">${row.duration}</div>
+            </td>
+            <td class="py-3.5 px-4 align-top space-y-2">
+              <div class="font-bold text-slate-900 dark:text-white ${isDone ? 'line-through text-slate-500' : ''}">${row.title}</div>
+              <div class="flex flex-wrap gap-1.5">${readingButtons}${labButtons}</div>
+            </td>
+            <td class="py-3.5 px-4 align-top">
+              ${quizColHtml}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // -------------------------------------------------------------
+    // MULTIPLE CHOICE EXAM LOGIC (HackerRank 5-Section 54Q + Quick 20Q + Study Plan Mixed + Full Bank)
     // -------------------------------------------------------------
     const HR_SECTIONS_CONFIG = [
       { id: 0, title: "Software Design & Arch", category: "Software Design and Architecture", count: 14, minutes: 25 },
@@ -1243,13 +1659,120 @@
     ];
 
     let mcqPoolMode = localStorage.getItem('c26_mcq_pool_mode') || 'hackerrank54';
-    if (!['hackerrank54', 'random20', 'all'].includes(mcqPoolMode)) mcqPoolMode = 'hackerrank54';
+    if (!['hackerrank54', 'random20', 'studyplan', 'all'].includes(mcqPoolMode)) mcqPoolMode = 'hackerrank54';
 
     let randomMockIds = JSON.parse(localStorage.getItem('c26_random_mock_ids_v3') || 'null');
+    let studyPlanQuizTarget = localStorage.getItem('c26_studyplan_quiz_target') || 'day:day1';
+    let studyPlanQuizIds = JSON.parse(localStorage.getItem('c26_studyplan_quiz_ids') || 'null');
     let hrExamSectionsIds = JSON.parse(localStorage.getItem('c26_hr54_sections_ids_v2') || 'null');
     let hrCurrentSectionIdx = parseInt(localStorage.getItem('c26_hr54_section_idx_v2') || '0', 10);
     let hrLockedSections = JSON.parse(localStorage.getItem('c26_hr54_locked_v2') || '{}');
     let mcqBankCategoryFilter = 'all';
+
+    function resolveStudyPlanTargetInfo(targetKey) {
+      if (targetKey && targetKey.startsWith('day:')) {
+        const dayId = targetKey.slice(4);
+        const dayItem = STUDY_PLAN_DATA.find(d => d.id === dayId && d.skills);
+        if (dayItem) {
+          return { label: dayItem.quizLabel || dayItem.title, skills: dayItem.skills };
+        }
+      }
+      if (targetKey && targetKey.startsWith('skill:')) {
+        const skillName = targetKey.slice(6);
+        return { label: `วิชา: ${skillName}`, skills: [skillName] };
+      }
+      const fallback = STUDY_PLAN_DATA[0];
+      return { label: fallback.quizLabel, skills: fallback.skills };
+    }
+
+    function shuffleArray(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function generateStudyPlanQuizIds(targetKey = studyPlanQuizTarget) {
+      studyPlanQuizTarget = targetKey;
+      localStorage.setItem('c26_studyplan_quiz_target', targetKey);
+      const info = resolveStudyPlanTargetInfo(targetKey);
+      const stats = getSkillPoolStats(info.skills);
+      // Fisher-Yates shuffle keeps both Single-Choice and Multi-Select randomly interleaved
+      const shuffled = shuffleArray(stats.matched);
+      studyPlanQuizIds = shuffled.map(q => q.id);
+      localStorage.setItem('c26_studyplan_quiz_ids', JSON.stringify(studyPlanQuizIds));
+      updateStudyPlanSummary(info, stats);
+      return studyPlanQuizIds;
+    }
+
+    function populateStudyPlanSelector() {
+      const sel = document.getElementById('studyplan-topic-select');
+      if (!sel) return;
+
+      const dayOptions = STUDY_PLAN_DATA.filter(d => d.skills).map(d => {
+        const s = getSkillPoolStats(d.skills);
+        return `<option value="${d.quizTarget}">${d.quizLabel} (${s.total} ข้อ: ${s.multiCount}M / ${s.singleCount}S)</option>`;
+      }).join('');
+
+      const uniqueSkills = [...new Set(MCQ_DATA.map(q => q.skill))];
+      const skillOptions = uniqueSkills.map(sk => {
+        const s = getSkillPoolStats([sk]);
+        return `<option value="skill:${sk}">${sk} (${s.total} ข้อ: ${s.multiCount}M / ${s.singleCount}S)</option>`;
+      }).join('');
+
+      sel.innerHTML = `
+        <optgroup label="📅 ตามตารางอ่านหนังสือรายวัน (คละวิชาในวันนั้น)">
+          ${dayOptions}
+        </optgroup>
+        <optgroup label="📚 เจาะจงรายวิชา (คละ Multi + Single)">
+          ${skillOptions}
+        </optgroup>
+      `;
+
+      if ([...sel.options].some(o => o.value === studyPlanQuizTarget)) {
+        sel.value = studyPlanQuizTarget;
+      } else {
+        studyPlanQuizTarget = 'day:day1';
+        sel.value = studyPlanQuizTarget;
+      }
+      const info = resolveStudyPlanTargetInfo(studyPlanQuizTarget);
+      updateStudyPlanSummary(info, getSkillPoolStats(info.skills));
+    }
+
+    function updateStudyPlanSummary(info, stats) {
+      const el = document.getElementById('studyplan-quiz-summary');
+      if (!el) return;
+      el.innerHTML = `กำลังสุ่ม <strong class="text-slate-800 dark:text-slate-100">${info.label}</strong> • รวม <strong class="font-mono">${stats.total}</strong> ข้อ (<span class="text-purple-600 dark:text-purple-400 font-semibold">Multiple Select ${stats.multiCount}</span> + <span class="text-slate-700 dark:text-slate-300 font-semibold">Multiple Choice ${stats.singleCount}</span>)`;
+    }
+
+    function changeStudyPlanQuizTarget() {
+      const sel = document.getElementById('studyplan-topic-select');
+      if (!sel) return;
+      launchStudyPlanQuiz(sel.value);
+    }
+
+    function reshuffleStudyPlanQuiz() {
+      launchStudyPlanQuiz(studyPlanQuizTarget);
+    }
+
+    function launchStudyPlanQuiz(targetKey) {
+      userMcqAnswers = {};
+      flaggedMcqs = {};
+      checkedPracticeMcqs = {};
+      examSubmitted = false;
+      localStorage.removeItem('c26_mcq_answers_v2');
+      localStorage.removeItem('c26_flagged_mcqs');
+      localStorage.removeItem('c26_exam_submitted_v2');
+      generateStudyPlanQuizIds(targetKey);
+      const sel = document.getElementById('studyplan-topic-select');
+      if (sel) sel.value = targetKey;
+      currentQIndex = 0;
+      switchTab('mcq');
+      setMcqPoolMode('studyplan', true);
+      updateDashboard();
+    }
 
     function initMcqSimulator() {
       if (!hrExamSectionsIds || hrExamSectionsIds.length !== 5) {
@@ -1257,6 +1780,9 @@
       }
       if (!randomMockIds || randomMockIds.length !== 20) {
         generateRandomMockIds();
+      }
+      if (!studyPlanQuizIds || studyPlanQuizIds.length === 0) {
+        generateStudyPlanQuizIds(studyPlanQuizTarget);
       }
       updateHideMultiCountBtn();
       setMcqPoolMode(mcqPoolMode, false);
@@ -1324,6 +1850,13 @@
         }
         return (hrExamSectionsIds[hrCurrentSectionIdx] || []).map(id => idMap.get(id)).filter(Boolean);
       }
+      if (mcqPoolMode === 'studyplan') {
+        if (!studyPlanQuizIds || studyPlanQuizIds.length === 0) {
+          generateStudyPlanQuizIds(studyPlanQuizTarget);
+        }
+        const planList = (studyPlanQuizIds || []).map(id => idMap.get(id)).filter(Boolean);
+        return planList.length > 0 ? planList : MCQ_DATA.slice(0, 15);
+      }
       if (mcqPoolMode === 'all') {
         return mcqBankCategoryFilter === 'all'
           ? MCQ_DATA
@@ -1342,12 +1875,14 @@
       currentQIndex = 0;
 
       const hrBar = document.getElementById('hr-sections-bar');
+      const planBar = document.getElementById('studyplan-quiz-bar');
       const catSelect = document.getElementById('mcq-bank-cat-filter');
       const btnShuffle = document.getElementById('btn-shuffle-mock');
       const paceHint = document.getElementById('exam-pace-hint');
 
       if (mode === 'hackerrank54') {
         hrBar.classList.remove('hidden');
+        if (planBar) planBar.classList.add('hidden');
         catSelect.classList.add('hidden');
         btnShuffle.classList.remove('hidden');
         const sec = HR_SECTIONS_CONFIG[hrCurrentSectionIdx] || HR_SECTIONS_CONFIG[0];
@@ -1361,8 +1896,21 @@
         paceHint.classList.remove('hidden');
         document.getElementById('q-nav-title').textContent = `Section ${hrCurrentSectionIdx + 1} (${sec.count} ข้อ)`;
         renderHackerRankSectionBar();
+      } else if (mode === 'studyplan') {
+        hrBar.classList.add('hidden');
+        if (planBar) planBar.classList.remove('hidden');
+        catSelect.classList.add('hidden');
+        btnShuffle.classList.remove('hidden');
+        paceHint.classList.add('hidden');
+        const info = resolveStudyPlanTargetInfo(studyPlanQuizTarget);
+        const stats = getSkillPoolStats(info.skills);
+        updateStudyPlanSummary(info, stats);
+        if (resetTimer) timerSeconds = Math.max(15, stats.total * 2) * 60;
+        document.getElementById('timer-label').textContent = `ตามตารางอ่าน (${stats.total} ข้อ คละ Multi+Single)`;
+        document.getElementById('q-nav-title').textContent = `แผนผังชุดฝึก (${stats.total} ข้อ)`;
       } else if (mode === 'random20') {
         hrBar.classList.add('hidden');
+        if (planBar) planBar.classList.add('hidden');
         catSelect.classList.add('hidden');
         btnShuffle.classList.remove('hidden');
         paceHint.classList.add('hidden');
@@ -1371,6 +1919,7 @@
         document.getElementById('q-nav-title').textContent = 'แผนผังข้อสอบ (สุ่ม 20 ข้อ)';
       } else {
         hrBar.classList.add('hidden');
+        if (planBar) planBar.classList.add('hidden');
         catSelect.classList.remove('hidden');
         btnShuffle.classList.add('hidden');
         paceHint.classList.add('hidden');
@@ -1439,6 +1988,7 @@
       const idleCls = "px-3 py-1.5 rounded-lg transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white flex items-center gap-1";
       document.getElementById('btn-pool-hr54').className = mcqPoolMode === 'hackerrank54' ? activeCls : idleCls;
       document.getElementById('btn-pool-random').className = mcqPoolMode === 'random20' ? activeCls : idleCls;
+      document.getElementById('btn-pool-plan').className = mcqPoolMode === 'studyplan' ? activeCls : idleCls;
       document.getElementById('btn-pool-all').className = mcqPoolMode === 'all' ? activeCls : idleCls;
     }
 
@@ -1477,6 +2027,8 @@
         localStorage.removeItem('c26_hr54_locked_v2');
         isPracticeMode = false;
         localStorage.setItem('c26_practice_mode', 'false');
+      } else if (mcqPoolMode === 'studyplan') {
+        generateStudyPlanQuizIds(studyPlanQuizTarget);
       } else {
         generateRandomMockIds();
       }
