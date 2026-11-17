@@ -228,11 +228,6 @@
             <option value="ProblemSolving">Problem Solving (6)</option>
           </select>
 
-          <!-- Hide Multi-Select Count Toggle -->
-          <button onclick="toggleHideMultiCount()" id="btn-hide-multi-count" class="text-xs font-medium px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition" title="สลับระหว่างบอกจำนวนข้อ (เช่น เลือก 2 ข้อ) กับไม่บอกจำนวน (Select all that apply)">
-            <span id="hide-multi-count-text">👁️ แสดงจำนวนที่ต้องเลือก</span>
-          </button>
-
           <!-- Practice vs Exam Mode -->
           <button onclick="toggleExamMode()" id="btn-mode-toggle" class="text-xs font-medium px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
             โหมด: <span id="current-exam-mode-text" class="text-brand-600 font-semibold">จำลองสอบจริง (เฉลยตอนส่ง)</span>
@@ -787,7 +782,7 @@
   <footer class="mt-auto py-6 border-t border-slate-200 dark:border-slate-800 text-center text-xs text-slate-500 dark:text-slate-400 space-y-1 bg-white/50 dark:bg-slate-900/50 backdrop-blur">
     <div class="flex items-center justify-center gap-2 font-medium">
       <span>Competency 2026 Interactive Exam Simulator</span>
-      <span class="px-2 py-0.5 rounded-full font-mono font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 text-[10px] border border-emerald-300/30">v2.4.1 (17 พ.ย. 2026)</span>
+      <span class="px-2 py-0.5 rounded-full font-mono font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 text-[10px] border border-emerald-300/30">v2.4.2 (17 พ.ย. 2026)</span>
     </div>
     <p class="text-[11px] text-slate-400">พัฒนาสำหรับเตรียมสอบ CoE Competency 2026 • ตารางอ่านสอบ 7 วัน • 15 Skills (Priority Stars) • 120 Hardcore MCQs (~78% Multi-Select 2-3 ข้อ) • 8 Software Coding + 4 SQL Sprint • 4 AI Prompts</p>
   </footer>
@@ -1114,7 +1109,6 @@
     let userMcqAnswers = JSON.parse(localStorage.getItem('c26_mcq_answers_v2') || '{}');
     let flaggedMcqs = JSON.parse(localStorage.getItem('c26_flagged_mcqs') || '{}');
     let checkedPracticeMcqs = {};
-    let hideMultiCount = localStorage.getItem('c26_hide_multi_count') === 'true';
     let examSubmitted = localStorage.getItem('c26_exam_submitted_v2') === 'true';
     let isPracticeMode = localStorage.getItem('c26_practice_mode') === 'true';
     let timerSeconds = 25 * 60;
@@ -1796,28 +1790,7 @@
       if (!studyPlanQuizIds || studyPlanQuizIds.length === 0) {
         generateStudyPlanQuizIds(studyPlanQuizTarget);
       }
-      updateHideMultiCountBtn();
       setMcqPoolMode(mcqPoolMode, false);
-    }
-
-    function updateHideMultiCountBtn() {
-      const btn = document.getElementById('btn-hide-multi-count');
-      const txt = document.getElementById('hide-multi-count-text');
-      if (!btn || !txt) return;
-      if (hideMultiCount) {
-        btn.className = "text-xs font-bold px-3 py-1.5 rounded-xl bg-purple-600 text-white border border-purple-500 shadow-sm transition";
-        txt.textContent = "🙈 โหมดโหด: ไม่บอกจำนวนข้อถูก";
-      } else {
-        btn.className = "text-xs font-medium px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition";
-        txt.textContent = "👁️ แสดงจำนวนที่ต้องเลือก";
-      }
-    }
-
-    function toggleHideMultiCount() {
-      hideMultiCount = !hideMultiCount;
-      localStorage.setItem('c26_hide_multi_count', hideMultiCount);
-      updateHideMultiCountBtn();
-      renderCurrentQuestion();
     }
 
     function generateHackerRank54Ids() {
@@ -2092,14 +2065,8 @@
       const isFlagged = Boolean(flaggedMcqs[q.id]);
       const isCheckedByBtn = Boolean(checkedPracticeMcqs[q.id]);
       const showAnswer = examSubmitted || (isPracticeMode && (
-        isMulti
-          ? (hideMultiCount ? isCheckedByBtn : selected.length >= q.correct.length)
-          : selected.length > 0
+        isMulti ? isCheckedByBtn : selected.length > 0
       ));
-
-      const multiLabel = hideMultiCount
-        ? '☑️ เลือกทุกข้อที่ถูกต้อง (ไม่บอกจำนวน)'
-        : `☑️ เลือก ${q.correct.length} ข้อที่ถูกต้อง`;
 
       const matchedCount = q.correct.filter(c => selected.includes(c)).length;
       const wrongSelectedCount = selected.filter(s => !q.correct.includes(s)).length;
@@ -2115,9 +2082,6 @@
               <button onclick="toggleFlagQuestion(${q.id})" class="text-xs px-2.5 py-0.5 rounded-full font-semibold border transition ${isFlagged ? 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border-amber-400' : 'border-slate-200 dark:border-slate-700 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800'}">
                 ${isFlagged ? '🚩 ปักธงไว้ทวนแล้ว' : '🏳️ ปักธงไว้ทวน'}
               </button>
-              <span class="text-xs px-2.5 py-0.5 rounded-full font-semibold ${isMulti ? 'bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300' : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'}">
-                ${isMulti ? multiLabel : '🔘 เลือก 1 ข้อที่ถูกต้อง'}
-              </span>
             </div>
           </div>
 
@@ -2159,7 +2123,7 @@
             }).join('')}
           </div>
 
-          ${(isPracticeMode && isMulti && hideMultiCount && !showAnswer && selected.length > 0) ? `
+          ${(isPracticeMode && isMulti && !showAnswer && selected.length > 0) ? `
             <div class="mt-4 flex justify-end">
               <button onclick="checkPracticeQuestion(${q.id})" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs shadow-sm transition">
                 ✓ ตรวจคำตอบข้อนี้ (เลือกแล้ว ${selected.length} ข้อ)
